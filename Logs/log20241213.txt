@@ -1,0 +1,503 @@
+2024-12-13 17:46:44.045 +01:00 [INF] Executed DbCommand (159ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2024-12-13 17:46:44.348 +01:00 [INF] User profile is available. Using 'C:\Users\joanf\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2024-12-13 17:46:44.567 +01:00 [INF] Now listening on: http://localhost:5299
+2024-12-13 17:46:44.575 +01:00 [INF] Application started. Press Ctrl+C to shut down.
+2024-12-13 17:46:44.576 +01:00 [INF] Hosting environment: Development
+2024-12-13 17:46:44.576 +01:00 [INF] Content root path: C:\Users\joanf\OneDrive\Desktop\Diidee's\CaseRelayAPI
+2024-12-13 17:46:52.371 +01:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5299/api/auth/login - null null
+2024-12-13 17:46:53.448 +01:00 [WRN] Failed to determine the https port for redirect.
+2024-12-13 17:46:53.463 +01:00 [INF] CORS policy execution successful.
+2024-12-13 17:46:53.491 +01:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5299/api/auth/login - 204 null null 1146.7724ms
+2024-12-13 17:46:54.164 +01:00 [INF] Request starting HTTP/1.1 POST http://localhost:5299/api/auth/login - application/json 42
+2024-12-13 17:46:54.221 +01:00 [INF] CORS policy execution successful.
+2024-12-13 17:46:54.506 +01:00 [INF] Executing endpoint 'CaseRelayAPI.Controllers.AuthController.Login (CaseRelayAPI)'
+2024-12-13 17:46:54.668 +01:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(CaseRelayAPI.Controllers.LoginRequest) on controller CaseRelayAPI.Controllers.AuthController (CaseRelayAPI).
+2024-12-13 17:46:56.197 +01:00 [INF] Executed DbCommand (108ms) [Parameters=[@__policeId_0='?' (Size = 4000)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [u].[UserID], [u].[BadgeNumber], [u].[Clearance], [u].[CreatedAt], [u].[Department], [u].[Division], [u].[Email], [u].[FailedLoginAttempts], [u].[FirstName], [u].[IsActive], [u].[IsVerified], [u].[LastLogin], [u].[LastName], [u].[LastPasswordChange], [u].[LockoutEnd], [u].[MobilePhone], [u].[PasscodeHash], [u].[PersonalIdentificationNumber], [u].[Phone], [u].[PoliceId], [u].[Precinct], [u].[ProfileImageUrl], [u].[Rank], [u].[RequirePasswordReset], [u].[Role], [u].[SpecialUnit], [u].[Station], [u].[SupervisorId], [u].[WorkPhone]
+FROM [Users] AS [u]
+WHERE [u].[PoliceId] = @__policeId_0
+2024-12-13 17:46:58.083 +01:00 [INF] Executed DbCommand (64ms) [Parameters=[@p1='?' (DbType = Int32), @p0='?' (DbType = DateTime2)], CommandType='"Text"', CommandTimeout='30']
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+UPDATE [Users] SET [LastLogin] = @p0
+OUTPUT 1
+WHERE [UserID] = @p1;
+2024-12-13 17:46:58.207 +01:00 [INF] Executing ObjectResult, writing value of type '<>f__AnonymousType0`1[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2024-12-13 17:46:58.285 +01:00 [INF] Executed action CaseRelayAPI.Controllers.AuthController.Login (CaseRelayAPI) in 3586.6743ms
+2024-12-13 17:46:58.286 +01:00 [INF] Executed endpoint 'CaseRelayAPI.Controllers.AuthController.Login (CaseRelayAPI)'
+2024-12-13 17:46:58.302 +01:00 [INF] Request finished HTTP/1.1 POST http://localhost:5299/api/auth/login - 500 null application/json; charset=utf-8 4138.855ms
+2024-12-13 17:47:11.152 +01:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5299/api/auth/login - null null
+2024-12-13 17:47:11.154 +01:00 [INF] CORS policy execution successful.
+2024-12-13 17:47:11.154 +01:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5299/api/auth/login - 204 null null 2.1111ms
+2024-12-13 17:47:11.164 +01:00 [INF] Request starting HTTP/1.1 POST http://localhost:5299/api/auth/login - application/json 40
+2024-12-13 17:47:11.165 +01:00 [INF] CORS policy execution successful.
+2024-12-13 17:47:11.167 +01:00 [INF] Executing endpoint 'CaseRelayAPI.Controllers.AuthController.Login (CaseRelayAPI)'
+2024-12-13 17:47:11.168 +01:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(CaseRelayAPI.Controllers.LoginRequest) on controller CaseRelayAPI.Controllers.AuthController (CaseRelayAPI).
+2024-12-13 17:47:11.346 +01:00 [INF] Executed DbCommand (19ms) [Parameters=[@__policeId_0='?' (Size = 4000)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [u].[UserID], [u].[BadgeNumber], [u].[Clearance], [u].[CreatedAt], [u].[Department], [u].[Division], [u].[Email], [u].[FailedLoginAttempts], [u].[FirstName], [u].[IsActive], [u].[IsVerified], [u].[LastLogin], [u].[LastName], [u].[LastPasswordChange], [u].[LockoutEnd], [u].[MobilePhone], [u].[PasscodeHash], [u].[PersonalIdentificationNumber], [u].[Phone], [u].[PoliceId], [u].[Precinct], [u].[ProfileImageUrl], [u].[Rank], [u].[RequirePasswordReset], [u].[Role], [u].[SpecialUnit], [u].[Station], [u].[SupervisorId], [u].[WorkPhone]
+FROM [Users] AS [u]
+WHERE [u].[PoliceId] = @__policeId_0
+2024-12-13 17:47:11.927 +01:00 [INF] Executed DbCommand (10ms) [Parameters=[@p1='?' (DbType = Int32), @p0='?' (DbType = DateTime2)], CommandType='"Text"', CommandTimeout='30']
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+UPDATE [Users] SET [LastLogin] = @p0
+OUTPUT 1
+WHERE [UserID] = @p1;
+2024-12-13 17:47:11.930 +01:00 [INF] Executing ObjectResult, writing value of type '<>f__AnonymousType0`1[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2024-12-13 17:47:11.931 +01:00 [INF] Executed action CaseRelayAPI.Controllers.AuthController.Login (CaseRelayAPI) in 762.1656ms
+2024-12-13 17:47:11.931 +01:00 [INF] Executed endpoint 'CaseRelayAPI.Controllers.AuthController.Login (CaseRelayAPI)'
+2024-12-13 17:47:11.933 +01:00 [INF] Request finished HTTP/1.1 POST http://localhost:5299/api/auth/login - 500 null application/json; charset=utf-8 768.4951ms
+2024-12-13 17:47:17.203 +01:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5299/api/auth/login - null null
+2024-12-13 17:47:17.204 +01:00 [INF] CORS policy execution successful.
+2024-12-13 17:47:17.211 +01:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5299/api/auth/login - 204 null null 6.2199ms
+2024-12-13 17:47:17.215 +01:00 [INF] Request starting HTTP/1.1 POST http://localhost:5299/api/auth/login - application/json 39
+2024-12-13 17:47:17.215 +01:00 [INF] CORS policy execution successful.
+2024-12-13 17:47:17.218 +01:00 [INF] Executing endpoint 'CaseRelayAPI.Controllers.AuthController.Login (CaseRelayAPI)'
+2024-12-13 17:47:17.218 +01:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(CaseRelayAPI.Controllers.LoginRequest) on controller CaseRelayAPI.Controllers.AuthController (CaseRelayAPI).
+2024-12-13 17:47:17.234 +01:00 [INF] Executed DbCommand (2ms) [Parameters=[@__policeId_0='?' (Size = 4000)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [u].[UserID], [u].[BadgeNumber], [u].[Clearance], [u].[CreatedAt], [u].[Department], [u].[Division], [u].[Email], [u].[FailedLoginAttempts], [u].[FirstName], [u].[IsActive], [u].[IsVerified], [u].[LastLogin], [u].[LastName], [u].[LastPasswordChange], [u].[LockoutEnd], [u].[MobilePhone], [u].[PasscodeHash], [u].[PersonalIdentificationNumber], [u].[Phone], [u].[PoliceId], [u].[Precinct], [u].[ProfileImageUrl], [u].[Rank], [u].[RequirePasswordReset], [u].[Role], [u].[SpecialUnit], [u].[Station], [u].[SupervisorId], [u].[WorkPhone]
+FROM [Users] AS [u]
+WHERE [u].[PoliceId] = @__policeId_0
+2024-12-13 17:47:17.560 +01:00 [INF] Executed DbCommand (9ms) [Parameters=[@p1='?' (DbType = Int32), @p0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+UPDATE [Users] SET [FailedLoginAttempts] = @p0
+OUTPUT 1
+WHERE [UserID] = @p1;
+2024-12-13 17:47:17.562 +01:00 [INF] Executing ObjectResult, writing value of type '<>f__AnonymousType0`1[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2024-12-13 17:47:17.562 +01:00 [INF] Executed action CaseRelayAPI.Controllers.AuthController.Login (CaseRelayAPI) in 344.2469ms
+2024-12-13 17:47:17.563 +01:00 [INF] Executed endpoint 'CaseRelayAPI.Controllers.AuthController.Login (CaseRelayAPI)'
+2024-12-13 17:47:17.563 +01:00 [INF] Request finished HTTP/1.1 POST http://localhost:5299/api/auth/login - 500 null application/json; charset=utf-8 348.3942ms
+2024-12-13 17:51:03.901 +01:00 [INF] Application is shutting down...
+2024-12-13 17:54:04.961 +01:00 [INF] Executed DbCommand (23ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2024-12-13 17:54:05.150 +01:00 [INF] User profile is available. Using 'C:\Users\joanf\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2024-12-13 17:54:05.245 +01:00 [INF] Now listening on: http://localhost:5299
+2024-12-13 17:54:05.252 +01:00 [INF] Application started. Press Ctrl+C to shut down.
+2024-12-13 17:54:05.253 +01:00 [INF] Hosting environment: Development
+2024-12-13 17:54:05.253 +01:00 [INF] Content root path: C:\Users\joanf\OneDrive\Desktop\Diidee's\CaseRelayAPI
+2024-12-13 17:54:12.666 +01:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5299/api/auth/login - null null
+2024-12-13 17:54:12.756 +01:00 [WRN] Failed to determine the https port for redirect.
+2024-12-13 17:54:12.758 +01:00 [INF] CORS policy execution successful.
+2024-12-13 17:54:12.787 +01:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5299/api/auth/login - 204 null null 128.6312ms
+2024-12-13 17:54:12.796 +01:00 [INF] Request starting HTTP/1.1 POST http://localhost:5299/api/auth/login - application/json 39
+2024-12-13 17:54:12.803 +01:00 [INF] CORS policy execution successful.
+2024-12-13 17:54:12.884 +01:00 [INF] Executing endpoint 'CaseRelayAPI.Controllers.AuthController.Login (CaseRelayAPI)'
+2024-12-13 17:54:12.939 +01:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(CaseRelayAPI.Controllers.LoginRequest) on controller CaseRelayAPI.Controllers.AuthController (CaseRelayAPI).
+2024-12-13 17:54:13.118 +01:00 [INF] Attempting to authenticate user with PoliceId: 77777
+2024-12-13 17:54:14.212 +01:00 [INF] Executed DbCommand (185ms) [Parameters=[@__policeId_0='?' (Size = 4000)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [u].[UserID], [u].[BadgeNumber], [u].[Clearance], [u].[CreatedAt], [u].[Department], [u].[Division], [u].[Email], [u].[FailedLoginAttempts], [u].[FirstName], [u].[IsActive], [u].[IsVerified], [u].[LastLogin], [u].[LastName], [u].[LastPasswordChange], [u].[LockoutEnd], [u].[MobilePhone], [u].[PasscodeHash], [u].[PersonalIdentificationNumber], [u].[Phone], [u].[PoliceId], [u].[Precinct], [u].[ProfileImageUrl], [u].[Rank], [u].[RequirePasswordReset], [u].[Role], [u].[SpecialUnit], [u].[Station], [u].[SupervisorId], [u].[WorkPhone]
+FROM [Users] AS [u]
+WHERE [u].[PoliceId] = @__policeId_0
+2024-12-13 17:54:15.707 +01:00 [INF] Executed DbCommand (11ms) [Parameters=[@p1='?' (DbType = Int32), @p0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+UPDATE [Users] SET [FailedLoginAttempts] = @p0
+OUTPUT 1
+WHERE [UserID] = @p1;
+2024-12-13 17:54:15.734 +01:00 [ERR] Invalid credentials for PoliceId: 77777
+2024-12-13 17:54:15.735 +01:00 [ERR] User not found for PoliceId: 77777
+2024-12-13 17:54:15.755 +01:00 [INF] Executing ObjectResult, writing value of type '<>f__AnonymousType0`1[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2024-12-13 17:54:15.849 +01:00 [INF] Executed action CaseRelayAPI.Controllers.AuthController.Login (CaseRelayAPI) in 2864.9868ms
+2024-12-13 17:54:15.850 +01:00 [INF] Executed endpoint 'CaseRelayAPI.Controllers.AuthController.Login (CaseRelayAPI)'
+2024-12-13 17:54:15.863 +01:00 [INF] Request finished HTTP/1.1 POST http://localhost:5299/api/auth/login - 500 null application/json; charset=utf-8 3070.9747ms
+2024-12-13 17:59:35.916 +01:00 [INF] Application is shutting down...
+2024-12-13 17:59:44.937 +01:00 [INF] Executed DbCommand (25ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2024-12-13 17:59:45.185 +01:00 [INF] User profile is available. Using 'C:\Users\joanf\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2024-12-13 17:59:45.352 +01:00 [INF] Now listening on: http://localhost:5299
+2024-12-13 17:59:45.358 +01:00 [INF] Application started. Press Ctrl+C to shut down.
+2024-12-13 17:59:45.359 +01:00 [INF] Hosting environment: Development
+2024-12-13 17:59:45.360 +01:00 [INF] Content root path: C:\Users\joanf\OneDrive\Desktop\Diidee's\CaseRelayAPI
+2024-12-13 17:59:51.751 +01:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5299/api/auth/login - null null
+2024-12-13 17:59:51.834 +01:00 [WRN] Failed to determine the https port for redirect.
+2024-12-13 17:59:51.837 +01:00 [INF] CORS policy execution successful.
+2024-12-13 17:59:51.853 +01:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5299/api/auth/login - 204 null null 111.8297ms
+2024-12-13 17:59:51.871 +01:00 [INF] Request starting HTTP/1.1 POST http://localhost:5299/api/auth/login - application/json 39
+2024-12-13 17:59:51.884 +01:00 [INF] CORS policy execution successful.
+2024-12-13 17:59:51.950 +01:00 [INF] Executing endpoint 'CaseRelayAPI.Controllers.AuthController.Login (CaseRelayAPI)'
+2024-12-13 17:59:52.006 +01:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(CaseRelayAPI.Controllers.LoginRequest) on controller CaseRelayAPI.Controllers.AuthController (CaseRelayAPI).
+2024-12-13 17:59:52.181 +01:00 [INF] Attempting to authenticate user with PoliceId: 77777
+2024-12-13 17:59:53.014 +01:00 [INF] Executed DbCommand (99ms) [Parameters=[@__policeId_0='?' (Size = 4000)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [u].[UserID], [u].[BadgeNumber], [u].[Clearance], [u].[CreatedAt], [u].[Department], [u].[Division], [u].[Email], [u].[FailedLoginAttempts], [u].[FirstName], [u].[IsActive], [u].[IsVerified], [u].[LastLogin], [u].[LastName], [u].[LastPasswordChange], [u].[LockoutEnd], [u].[MobilePhone], [u].[PasscodeHash], [u].[PersonalIdentificationNumber], [u].[Phone], [u].[PoliceId], [u].[Precinct], [u].[ProfileImageUrl], [u].[Rank], [u].[RequirePasswordReset], [u].[Role], [u].[SpecialUnit], [u].[Station], [u].[SupervisorId], [u].[WorkPhone]
+FROM [Users] AS [u]
+WHERE [u].[PoliceId] = @__policeId_0
+2024-12-13 17:59:54.292 +01:00 [INF] Executed DbCommand (11ms) [Parameters=[@p1='?' (DbType = Int32), @p0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+UPDATE [Users] SET [FailedLoginAttempts] = @p0
+OUTPUT 1
+WHERE [UserID] = @p1;
+2024-12-13 17:59:54.325 +01:00 [ERR] Authentication failed for PoliceId: 77777 with error: Invalid credentials
+2024-12-13 17:59:54.348 +01:00 [INF] Executing UnauthorizedObjectResult, writing value of type '<>f__AnonymousType0`1[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2024-12-13 17:59:54.408 +01:00 [INF] Executed action CaseRelayAPI.Controllers.AuthController.Login (CaseRelayAPI) in 2384.3966ms
+2024-12-13 17:59:54.409 +01:00 [INF] Executed endpoint 'CaseRelayAPI.Controllers.AuthController.Login (CaseRelayAPI)'
+2024-12-13 17:59:54.457 +01:00 [INF] Request finished HTTP/1.1 POST http://localhost:5299/api/auth/login - 401 null application/json; charset=utf-8 2585.8551ms
+2024-12-13 17:59:59.839 +01:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5299/api/auth/login - null null
+2024-12-13 17:59:59.849 +01:00 [INF] CORS policy execution successful.
+2024-12-13 17:59:59.850 +01:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5299/api/auth/login - 204 null null 10.898ms
+2024-12-13 17:59:59.853 +01:00 [INF] Request starting HTTP/1.1 POST http://localhost:5299/api/auth/login - application/json 40
+2024-12-13 17:59:59.854 +01:00 [INF] CORS policy execution successful.
+2024-12-13 17:59:59.858 +01:00 [INF] Executing endpoint 'CaseRelayAPI.Controllers.AuthController.Login (CaseRelayAPI)'
+2024-12-13 17:59:59.866 +01:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(CaseRelayAPI.Controllers.LoginRequest) on controller CaseRelayAPI.Controllers.AuthController (CaseRelayAPI).
+2024-12-13 17:59:59.873 +01:00 [INF] Attempting to authenticate user with PoliceId: 77777
+2024-12-13 18:00:00.066 +01:00 [INF] Executed DbCommand (57ms) [Parameters=[@__policeId_0='?' (Size = 4000)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [u].[UserID], [u].[BadgeNumber], [u].[Clearance], [u].[CreatedAt], [u].[Department], [u].[Division], [u].[Email], [u].[FailedLoginAttempts], [u].[FirstName], [u].[IsActive], [u].[IsVerified], [u].[LastLogin], [u].[LastName], [u].[LastPasswordChange], [u].[LockoutEnd], [u].[MobilePhone], [u].[PasscodeHash], [u].[PersonalIdentificationNumber], [u].[Phone], [u].[PoliceId], [u].[Precinct], [u].[ProfileImageUrl], [u].[Rank], [u].[RequirePasswordReset], [u].[Role], [u].[SpecialUnit], [u].[Station], [u].[SupervisorId], [u].[WorkPhone]
+FROM [Users] AS [u]
+WHERE [u].[PoliceId] = @__policeId_0
+2024-12-13 18:00:00.657 +01:00 [INF] Executed DbCommand (7ms) [Parameters=[@p2='?' (DbType = Int32), @p0='?' (DbType = Int32), @p1='?' (DbType = DateTime2)], CommandType='"Text"', CommandTimeout='30']
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+UPDATE [Users] SET [FailedLoginAttempts] = @p0, [LastLogin] = @p1
+OUTPUT 1
+WHERE [UserID] = @p2;
+2024-12-13 18:00:00.706 +01:00 [INF] User authenticated successfully with PoliceId: 77777
+2024-12-13 18:00:00.720 +01:00 [INF] Executed action CaseRelayAPI.Controllers.AuthController.Login (CaseRelayAPI) in 852.4378ms
+2024-12-13 18:00:00.721 +01:00 [INF] Executed endpoint 'CaseRelayAPI.Controllers.AuthController.Login (CaseRelayAPI)'
+2024-12-13 18:00:00.789 +01:00 [ERR] An error occurred while processing the request.
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at CaseRelayAPI.Controllers.AuthController.Login(LoginRequest request) in C:\Users\joanf\OneDrive\Desktop\Diidee's\CaseRelayAPI\controllers\AuthController.cs:line 76
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at ExceptionHandlingMiddleware.InvokeAsync(HttpContext httpContext) in C:\Users\joanf\OneDrive\Desktop\Diidee's\CaseRelayAPI\Program.cs:line 127
+2024-12-13 18:00:00.797 +01:00 [INF] Request finished HTTP/1.1 POST http://localhost:5299/api/auth/login - 500 null null 943.5921ms
+2024-12-13 18:02:12.927 +01:00 [INF] Application is shutting down...
+2024-12-13 18:02:28.421 +01:00 [INF] Executed DbCommand (29ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2024-12-13 18:02:28.680 +01:00 [INF] User profile is available. Using 'C:\Users\joanf\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2024-12-13 18:02:28.815 +01:00 [INF] Now listening on: http://localhost:5299
+2024-12-13 18:02:28.823 +01:00 [INF] Application started. Press Ctrl+C to shut down.
+2024-12-13 18:02:28.824 +01:00 [INF] Hosting environment: Development
+2024-12-13 18:02:28.824 +01:00 [INF] Content root path: C:\Users\joanf\OneDrive\Desktop\Diidee's\CaseRelayAPI
+2024-12-13 18:02:29.488 +01:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5299/api/auth/login - null null
+2024-12-13 18:02:29.593 +01:00 [WRN] Failed to determine the https port for redirect.
+2024-12-13 18:02:29.595 +01:00 [INF] CORS policy execution successful.
+2024-12-13 18:02:29.610 +01:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5299/api/auth/login - 204 null null 132.375ms
+2024-12-13 18:02:29.624 +01:00 [INF] Request starting HTTP/1.1 POST http://localhost:5299/api/auth/login - application/json 40
+2024-12-13 18:02:29.637 +01:00 [INF] CORS policy execution successful.
+2024-12-13 18:02:29.710 +01:00 [INF] Executing endpoint 'CaseRelayAPI.Controllers.AuthController.Login (CaseRelayAPI)'
+2024-12-13 18:02:29.773 +01:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(CaseRelayAPI.Controllers.LoginRequest) on controller CaseRelayAPI.Controllers.AuthController (CaseRelayAPI).
+2024-12-13 18:02:29.969 +01:00 [INF] Attempting to authenticate user with PoliceId: 77777
+2024-12-13 18:02:31.102 +01:00 [INF] Executed DbCommand (141ms) [Parameters=[@__policeId_0='?' (Size = 4000)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [u].[UserID], [u].[BadgeNumber], [u].[Clearance], [u].[CreatedAt], [u].[Department], [u].[Division], [u].[Email], [u].[FailedLoginAttempts], [u].[FirstName], [u].[IsActive], [u].[IsVerified], [u].[LastLogin], [u].[LastName], [u].[LastPasswordChange], [u].[LockoutEnd], [u].[MobilePhone], [u].[PasscodeHash], [u].[PersonalIdentificationNumber], [u].[Phone], [u].[PoliceId], [u].[Precinct], [u].[ProfileImageUrl], [u].[Rank], [u].[RequirePasswordReset], [u].[Role], [u].[SpecialUnit], [u].[Station], [u].[SupervisorId], [u].[WorkPhone]
+FROM [Users] AS [u]
+WHERE [u].[PoliceId] = @__policeId_0
+2024-12-13 18:02:32.777 +01:00 [INF] Executed DbCommand (51ms) [Parameters=[@p1='?' (DbType = Int32), @p0='?' (DbType = DateTime2)], CommandType='"Text"', CommandTimeout='30']
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+UPDATE [Users] SET [LastLogin] = @p0
+OUTPUT 1
+WHERE [UserID] = @p1;
+2024-12-13 18:02:32.856 +01:00 [INF] User authenticated successfully with PoliceId: 77777
+2024-12-13 18:02:32.878 +01:00 [INF] Executed action CaseRelayAPI.Controllers.AuthController.Login (CaseRelayAPI) in 3087.7151ms
+2024-12-13 18:02:32.879 +01:00 [INF] Executed endpoint 'CaseRelayAPI.Controllers.AuthController.Login (CaseRelayAPI)'
+2024-12-13 18:02:32.926 +01:00 [ERR] An error occurred while processing the request.
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at CaseRelayAPI.Controllers.AuthController.Login(LoginRequest request) in C:\Users\joanf\OneDrive\Desktop\Diidee's\CaseRelayAPI\controllers\AuthController.cs:line 76
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at ExceptionHandlingMiddleware.InvokeAsync(HttpContext httpContext) in C:\Users\joanf\OneDrive\Desktop\Diidee's\CaseRelayAPI\Program.cs:line 127
+2024-12-13 18:02:32.939 +01:00 [INF] Request finished HTTP/1.1 POST http://localhost:5299/api/auth/login - 500 null null 3315.5376ms
+2024-12-13 18:02:35.024 +01:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5299/api/auth/login - null null
+2024-12-13 18:02:35.035 +01:00 [INF] CORS policy execution successful.
+2024-12-13 18:02:35.036 +01:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5299/api/auth/login - 204 null null 11.6569ms
+2024-12-13 18:02:35.040 +01:00 [INF] Request starting HTTP/1.1 POST http://localhost:5299/api/auth/login - application/json 40
+2024-12-13 18:02:35.041 +01:00 [INF] CORS policy execution successful.
+2024-12-13 18:02:35.044 +01:00 [INF] Executing endpoint 'CaseRelayAPI.Controllers.AuthController.Login (CaseRelayAPI)'
+2024-12-13 18:02:35.045 +01:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(CaseRelayAPI.Controllers.LoginRequest) on controller CaseRelayAPI.Controllers.AuthController (CaseRelayAPI).
+2024-12-13 18:02:35.059 +01:00 [INF] Attempting to authenticate user with PoliceId: 77777
+2024-12-13 18:02:35.205 +01:00 [INF] Executed DbCommand (18ms) [Parameters=[@__policeId_0='?' (Size = 4000)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [u].[UserID], [u].[BadgeNumber], [u].[Clearance], [u].[CreatedAt], [u].[Department], [u].[Division], [u].[Email], [u].[FailedLoginAttempts], [u].[FirstName], [u].[IsActive], [u].[IsVerified], [u].[LastLogin], [u].[LastName], [u].[LastPasswordChange], [u].[LockoutEnd], [u].[MobilePhone], [u].[PasscodeHash], [u].[PersonalIdentificationNumber], [u].[Phone], [u].[PoliceId], [u].[Precinct], [u].[ProfileImageUrl], [u].[Rank], [u].[RequirePasswordReset], [u].[Role], [u].[SpecialUnit], [u].[Station], [u].[SupervisorId], [u].[WorkPhone]
+FROM [Users] AS [u]
+WHERE [u].[PoliceId] = @__policeId_0
+2024-12-13 18:02:35.767 +01:00 [INF] Executed DbCommand (12ms) [Parameters=[@p1='?' (DbType = Int32), @p0='?' (DbType = DateTime2)], CommandType='"Text"', CommandTimeout='30']
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+UPDATE [Users] SET [LastLogin] = @p0
+OUTPUT 1
+WHERE [UserID] = @p1;
+2024-12-13 18:02:35.769 +01:00 [INF] User authenticated successfully with PoliceId: 77777
+2024-12-13 18:02:35.771 +01:00 [INF] Executed action CaseRelayAPI.Controllers.AuthController.Login (CaseRelayAPI) in 725.5481ms
+2024-12-13 18:02:35.771 +01:00 [INF] Executed endpoint 'CaseRelayAPI.Controllers.AuthController.Login (CaseRelayAPI)'
+2024-12-13 18:02:35.776 +01:00 [ERR] An error occurred while processing the request.
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at CaseRelayAPI.Controllers.AuthController.Login(LoginRequest request) in C:\Users\joanf\OneDrive\Desktop\Diidee's\CaseRelayAPI\controllers\AuthController.cs:line 76
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at ExceptionHandlingMiddleware.InvokeAsync(HttpContext httpContext) in C:\Users\joanf\OneDrive\Desktop\Diidee's\CaseRelayAPI\Program.cs:line 127
+2024-12-13 18:02:35.781 +01:00 [INF] Request finished HTTP/1.1 POST http://localhost:5299/api/auth/login - 500 null null 741.3726ms
+2024-12-13 18:05:27.587 +01:00 [INF] Application is shutting down...
+2024-12-13 18:21:24.672 +01:00 [INF] Executed DbCommand (26ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2024-12-13 18:21:24.955 +01:00 [INF] User profile is available. Using 'C:\Users\joanf\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2024-12-13 18:21:25.095 +01:00 [INF] Now listening on: http://localhost:5299
+2024-12-13 18:21:25.104 +01:00 [INF] Application started. Press Ctrl+C to shut down.
+2024-12-13 18:21:25.105 +01:00 [INF] Hosting environment: Development
+2024-12-13 18:21:25.106 +01:00 [INF] Content root path: C:\Users\joanf\OneDrive\Desktop\Diidee's\CaseRelayAPI
+2024-12-13 18:21:39.074 +01:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5299/api/auth/login - null null
+2024-12-13 18:21:39.173 +01:00 [WRN] Failed to determine the https port for redirect.
+2024-12-13 18:21:39.175 +01:00 [INF] CORS policy execution successful.
+2024-12-13 18:21:39.199 +01:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5299/api/auth/login - 204 null null 124.9875ms
+2024-12-13 18:21:39.206 +01:00 [INF] Request starting HTTP/1.1 POST http://localhost:5299/api/auth/login - application/json 40
+2024-12-13 18:21:39.216 +01:00 [INF] CORS policy execution successful.
+2024-12-13 18:21:39.295 +01:00 [INF] Executing endpoint 'CaseRelayAPI.Controllers.AuthController.Login (CaseRelayAPI)'
+2024-12-13 18:21:39.357 +01:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(CaseRelayAPI.Controllers.LoginRequest) on controller CaseRelayAPI.Controllers.AuthController (CaseRelayAPI).
+2024-12-13 18:21:39.530 +01:00 [INF] Attempting to authenticate user with PoliceId: 77777
+2024-12-13 18:21:40.680 +01:00 [INF] Executed DbCommand (81ms) [Parameters=[@__policeId_0='?' (Size = 4000)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [u].[UserID], [u].[BadgeNumber], [u].[Clearance], [u].[CreatedAt], [u].[Department], [u].[Division], [u].[Email], [u].[FailedLoginAttempts], [u].[FirstName], [u].[IsActive], [u].[IsVerified], [u].[LastLogin], [u].[LastName], [u].[LastPasswordChange], [u].[LockoutEnd], [u].[MobilePhone], [u].[PasscodeHash], [u].[PersonalIdentificationNumber], [u].[Phone], [u].[PoliceId], [u].[Precinct], [u].[ProfileImageUrl], [u].[Rank], [u].[RequirePasswordReset], [u].[Role], [u].[SpecialUnit], [u].[Station], [u].[SupervisorId], [u].[WorkPhone]
+FROM [Users] AS [u]
+WHERE [u].[PoliceId] = @__policeId_0
+2024-12-13 18:21:42.058 +01:00 [INF] Executed DbCommand (32ms) [Parameters=[@p1='?' (DbType = Int32), @p0='?' (DbType = DateTime2)], CommandType='"Text"', CommandTimeout='30']
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+UPDATE [Users] SET [LastLogin] = @p0
+OUTPUT 1
+WHERE [UserID] = @p1;
+2024-12-13 18:21:42.149 +01:00 [INF] User authenticated successfully with PoliceId: 77777
+2024-12-13 18:21:42.183 +01:00 [INF] Executed action CaseRelayAPI.Controllers.AuthController.Login (CaseRelayAPI) in 2808.9757ms
+2024-12-13 18:21:42.185 +01:00 [INF] Executed endpoint 'CaseRelayAPI.Controllers.AuthController.Login (CaseRelayAPI)'
+2024-12-13 18:21:42.267 +01:00 [ERR] An error occurred while processing the request.
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at CaseRelayAPI.Controllers.AuthController.Login(LoginRequest request) in C:\Users\joanf\OneDrive\Desktop\Diidee's\CaseRelayAPI\controllers\AuthController.cs:line 76
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at ExceptionHandlingMiddleware.InvokeAsync(HttpContext httpContext) in C:\Users\joanf\OneDrive\Desktop\Diidee's\CaseRelayAPI\Program.cs:line 127
+2024-12-13 18:21:42.280 +01:00 [INF] Request finished HTTP/1.1 POST http://localhost:5299/api/auth/login - 500 null null 3071.2731ms
+2024-12-13 18:22:00.725 +01:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5299/api/auth/login - null null
+2024-12-13 18:22:00.732 +01:00 [INF] CORS policy execution successful.
+2024-12-13 18:22:00.733 +01:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5299/api/auth/login - 204 null null 7.6071ms
+2024-12-13 18:22:00.742 +01:00 [INF] Request starting HTTP/1.1 POST http://localhost:5299/api/auth/login - application/json 39
+2024-12-13 18:22:00.742 +01:00 [INF] CORS policy execution successful.
+2024-12-13 18:22:00.746 +01:00 [INF] Executing endpoint 'CaseRelayAPI.Controllers.AuthController.Login (CaseRelayAPI)'
+2024-12-13 18:22:00.747 +01:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(CaseRelayAPI.Controllers.LoginRequest) on controller CaseRelayAPI.Controllers.AuthController (CaseRelayAPI).
+2024-12-13 18:22:00.763 +01:00 [INF] Attempting to authenticate user with PoliceId: 77777
+2024-12-13 18:22:00.905 +01:00 [INF] Executed DbCommand (9ms) [Parameters=[@__policeId_0='?' (Size = 4000)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [u].[UserID], [u].[BadgeNumber], [u].[Clearance], [u].[CreatedAt], [u].[Department], [u].[Division], [u].[Email], [u].[FailedLoginAttempts], [u].[FirstName], [u].[IsActive], [u].[IsVerified], [u].[LastLogin], [u].[LastName], [u].[LastPasswordChange], [u].[LockoutEnd], [u].[MobilePhone], [u].[PasscodeHash], [u].[PersonalIdentificationNumber], [u].[Phone], [u].[PoliceId], [u].[Precinct], [u].[ProfileImageUrl], [u].[Rank], [u].[RequirePasswordReset], [u].[Role], [u].[SpecialUnit], [u].[Station], [u].[SupervisorId], [u].[WorkPhone]
+FROM [Users] AS [u]
+WHERE [u].[PoliceId] = @__policeId_0
+2024-12-13 18:22:01.412 +01:00 [INF] Executed DbCommand (13ms) [Parameters=[@p1='?' (DbType = Int32), @p0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+UPDATE [Users] SET [FailedLoginAttempts] = @p0
+OUTPUT 1
+WHERE [UserID] = @p1;
+2024-12-13 18:22:01.414 +01:00 [ERR] Invalid credentials for PoliceId: 77777
+2024-12-13 18:22:01.415 +01:00 [ERR] Authentication failed for PoliceId: 77777 with error: Invalid credentials
+2024-12-13 18:22:01.432 +01:00 [INF] Executing UnauthorizedObjectResult, writing value of type '<>f__AnonymousType0`1[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2024-12-13 18:22:01.469 +01:00 [INF] Executed action CaseRelayAPI.Controllers.AuthController.Login (CaseRelayAPI) in 721.6392ms
+2024-12-13 18:22:01.470 +01:00 [INF] Executed endpoint 'CaseRelayAPI.Controllers.AuthController.Login (CaseRelayAPI)'
+2024-12-13 18:22:01.471 +01:00 [INF] Request finished HTTP/1.1 POST http://localhost:5299/api/auth/login - 401 null application/json; charset=utf-8 729.4163ms
+2024-12-13 18:22:02.148 +01:00 [INF] Request starting HTTP/1.1 POST http://localhost:5299/api/auth/login - application/json 39
+2024-12-13 18:22:02.149 +01:00 [INF] CORS policy execution successful.
+2024-12-13 18:22:02.159 +01:00 [INF] Executing endpoint 'CaseRelayAPI.Controllers.AuthController.Login (CaseRelayAPI)'
+2024-12-13 18:22:02.160 +01:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(CaseRelayAPI.Controllers.LoginRequest) on controller CaseRelayAPI.Controllers.AuthController (CaseRelayAPI).
+2024-12-13 18:22:02.167 +01:00 [INF] Attempting to authenticate user with PoliceId: 77777
+2024-12-13 18:22:02.172 +01:00 [INF] Executed DbCommand (1ms) [Parameters=[@__policeId_0='?' (Size = 4000)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [u].[UserID], [u].[BadgeNumber], [u].[Clearance], [u].[CreatedAt], [u].[Department], [u].[Division], [u].[Email], [u].[FailedLoginAttempts], [u].[FirstName], [u].[IsActive], [u].[IsVerified], [u].[LastLogin], [u].[LastName], [u].[LastPasswordChange], [u].[LockoutEnd], [u].[MobilePhone], [u].[PasscodeHash], [u].[PersonalIdentificationNumber], [u].[Phone], [u].[PoliceId], [u].[Precinct], [u].[ProfileImageUrl], [u].[Rank], [u].[RequirePasswordReset], [u].[Role], [u].[SpecialUnit], [u].[Station], [u].[SupervisorId], [u].[WorkPhone]
+FROM [Users] AS [u]
+WHERE [u].[PoliceId] = @__policeId_0
+2024-12-13 18:22:02.479 +01:00 [INF] Executed DbCommand (8ms) [Parameters=[@p1='?' (DbType = Int32), @p0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+UPDATE [Users] SET [FailedLoginAttempts] = @p0
+OUTPUT 1
+WHERE [UserID] = @p1;
+2024-12-13 18:22:02.481 +01:00 [ERR] Invalid credentials for PoliceId: 77777
+2024-12-13 18:22:02.481 +01:00 [ERR] Authentication failed for PoliceId: 77777 with error: Invalid credentials
+2024-12-13 18:22:02.482 +01:00 [INF] Executing UnauthorizedObjectResult, writing value of type '<>f__AnonymousType0`1[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2024-12-13 18:22:02.483 +01:00 [INF] Executed action CaseRelayAPI.Controllers.AuthController.Login (CaseRelayAPI) in 323.1949ms
+2024-12-13 18:22:02.483 +01:00 [INF] Executed endpoint 'CaseRelayAPI.Controllers.AuthController.Login (CaseRelayAPI)'
+2024-12-13 18:22:02.484 +01:00 [INF] Request finished HTTP/1.1 POST http://localhost:5299/api/auth/login - 401 null application/json; charset=utf-8 335.2903ms
+2024-12-13 18:22:03.294 +01:00 [INF] Request starting HTTP/1.1 POST http://localhost:5299/api/auth/login - application/json 39
+2024-12-13 18:22:03.295 +01:00 [INF] CORS policy execution successful.
+2024-12-13 18:22:03.296 +01:00 [INF] Executing endpoint 'CaseRelayAPI.Controllers.AuthController.Login (CaseRelayAPI)'
+2024-12-13 18:22:03.296 +01:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(CaseRelayAPI.Controllers.LoginRequest) on controller CaseRelayAPI.Controllers.AuthController (CaseRelayAPI).
+2024-12-13 18:22:03.302 +01:00 [INF] Attempting to authenticate user with PoliceId: 77777
+2024-12-13 18:22:03.314 +01:00 [INF] Executed DbCommand (7ms) [Parameters=[@__policeId_0='?' (Size = 4000)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [u].[UserID], [u].[BadgeNumber], [u].[Clearance], [u].[CreatedAt], [u].[Department], [u].[Division], [u].[Email], [u].[FailedLoginAttempts], [u].[FirstName], [u].[IsActive], [u].[IsVerified], [u].[LastLogin], [u].[LastName], [u].[LastPasswordChange], [u].[LockoutEnd], [u].[MobilePhone], [u].[PasscodeHash], [u].[PersonalIdentificationNumber], [u].[Phone], [u].[PoliceId], [u].[Precinct], [u].[ProfileImageUrl], [u].[Rank], [u].[RequirePasswordReset], [u].[Role], [u].[SpecialUnit], [u].[Station], [u].[SupervisorId], [u].[WorkPhone]
+FROM [Users] AS [u]
+WHERE [u].[PoliceId] = @__policeId_0
+2024-12-13 18:22:03.614 +01:00 [INF] Executed DbCommand (1ms) [Parameters=[@p1='?' (DbType = Int32), @p0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+UPDATE [Users] SET [FailedLoginAttempts] = @p0
+OUTPUT 1
+WHERE [UserID] = @p1;
+2024-12-13 18:22:03.615 +01:00 [ERR] Invalid credentials for PoliceId: 77777
+2024-12-13 18:22:03.615 +01:00 [ERR] Authentication failed for PoliceId: 77777 with error: Invalid credentials
+2024-12-13 18:22:03.615 +01:00 [INF] Executing UnauthorizedObjectResult, writing value of type '<>f__AnonymousType0`1[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2024-12-13 18:22:03.615 +01:00 [INF] Executed action CaseRelayAPI.Controllers.AuthController.Login (CaseRelayAPI) in 319.1088ms
+2024-12-13 18:22:03.616 +01:00 [INF] Executed endpoint 'CaseRelayAPI.Controllers.AuthController.Login (CaseRelayAPI)'
+2024-12-13 18:22:03.616 +01:00 [INF] Request finished HTTP/1.1 POST http://localhost:5299/api/auth/login - 401 null application/json; charset=utf-8 321.7982ms
+2024-12-13 18:22:04.201 +01:00 [INF] Request starting HTTP/1.1 POST http://localhost:5299/api/auth/login - application/json 39
+2024-12-13 18:22:04.202 +01:00 [INF] CORS policy execution successful.
+2024-12-13 18:22:04.202 +01:00 [INF] Executing endpoint 'CaseRelayAPI.Controllers.AuthController.Login (CaseRelayAPI)'
+2024-12-13 18:22:04.203 +01:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(CaseRelayAPI.Controllers.LoginRequest) on controller CaseRelayAPI.Controllers.AuthController (CaseRelayAPI).
+2024-12-13 18:22:04.211 +01:00 [INF] Attempting to authenticate user with PoliceId: 77777
+2024-12-13 18:22:04.231 +01:00 [INF] Executed DbCommand (11ms) [Parameters=[@__policeId_0='?' (Size = 4000)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [u].[UserID], [u].[BadgeNumber], [u].[Clearance], [u].[CreatedAt], [u].[Department], [u].[Division], [u].[Email], [u].[FailedLoginAttempts], [u].[FirstName], [u].[IsActive], [u].[IsVerified], [u].[LastLogin], [u].[LastName], [u].[LastPasswordChange], [u].[LockoutEnd], [u].[MobilePhone], [u].[PasscodeHash], [u].[PersonalIdentificationNumber], [u].[Phone], [u].[PoliceId], [u].[Precinct], [u].[ProfileImageUrl], [u].[Rank], [u].[RequirePasswordReset], [u].[Role], [u].[SpecialUnit], [u].[Station], [u].[SupervisorId], [u].[WorkPhone]
+FROM [Users] AS [u]
+WHERE [u].[PoliceId] = @__policeId_0
+2024-12-13 18:22:04.543 +01:00 [INF] Executed DbCommand (9ms) [Parameters=[@p1='?' (DbType = Int32), @p0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+UPDATE [Users] SET [FailedLoginAttempts] = @p0
+OUTPUT 1
+WHERE [UserID] = @p1;
+2024-12-13 18:22:04.544 +01:00 [ERR] Invalid credentials for PoliceId: 77777
+2024-12-13 18:22:04.544 +01:00 [ERR] Authentication failed for PoliceId: 77777 with error: Invalid credentials
+2024-12-13 18:22:04.544 +01:00 [INF] Executing UnauthorizedObjectResult, writing value of type '<>f__AnonymousType0`1[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2024-12-13 18:22:04.545 +01:00 [INF] Executed action CaseRelayAPI.Controllers.AuthController.Login (CaseRelayAPI) in 341.5602ms
+2024-12-13 18:22:04.545 +01:00 [INF] Executed endpoint 'CaseRelayAPI.Controllers.AuthController.Login (CaseRelayAPI)'
+2024-12-13 18:22:04.545 +01:00 [INF] Request finished HTTP/1.1 POST http://localhost:5299/api/auth/login - 401 null application/json; charset=utf-8 343.6165ms
+2024-12-13 18:22:05.092 +01:00 [INF] Request starting HTTP/1.1 POST http://localhost:5299/api/auth/login - application/json 39
+2024-12-13 18:22:05.092 +01:00 [INF] CORS policy execution successful.
+2024-12-13 18:22:05.092 +01:00 [INF] Executing endpoint 'CaseRelayAPI.Controllers.AuthController.Login (CaseRelayAPI)'
+2024-12-13 18:22:05.092 +01:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(CaseRelayAPI.Controllers.LoginRequest) on controller CaseRelayAPI.Controllers.AuthController (CaseRelayAPI).
+2024-12-13 18:22:05.093 +01:00 [INF] Attempting to authenticate user with PoliceId: 77777
+2024-12-13 18:22:05.115 +01:00 [INF] Executed DbCommand (21ms) [Parameters=[@__policeId_0='?' (Size = 4000)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [u].[UserID], [u].[BadgeNumber], [u].[Clearance], [u].[CreatedAt], [u].[Department], [u].[Division], [u].[Email], [u].[FailedLoginAttempts], [u].[FirstName], [u].[IsActive], [u].[IsVerified], [u].[LastLogin], [u].[LastName], [u].[LastPasswordChange], [u].[LockoutEnd], [u].[MobilePhone], [u].[PasscodeHash], [u].[PersonalIdentificationNumber], [u].[Phone], [u].[PoliceId], [u].[Precinct], [u].[ProfileImageUrl], [u].[Rank], [u].[RequirePasswordReset], [u].[Role], [u].[SpecialUnit], [u].[Station], [u].[SupervisorId], [u].[WorkPhone]
+FROM [Users] AS [u]
+WHERE [u].[PoliceId] = @__policeId_0
+2024-12-13 18:22:05.421 +01:00 [INF] Executed DbCommand (10ms) [Parameters=[@p3='?' (DbType = Int32), @p0='?' (DbType = Int32), @p1='?' (DbType = Boolean), @p2='?' (DbType = DateTime2)], CommandType='"Text"', CommandTimeout='30']
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+UPDATE [Users] SET [FailedLoginAttempts] = @p0, [IsActive] = @p1, [LockoutEnd] = @p2
+OUTPUT 1
+WHERE [UserID] = @p3;
+2024-12-13 18:22:31.375 +01:00 [INF] Executed action CaseRelayAPI.Controllers.AuthController.Login (CaseRelayAPI) in 26282.7546ms
+2024-12-13 18:22:31.375 +01:00 [INF] Executed endpoint 'CaseRelayAPI.Controllers.AuthController.Login (CaseRelayAPI)'
+2024-12-13 18:22:31.387 +01:00 [ERR] An error occurred while processing the request.
+MailKit.Net.Smtp.SmtpProtocolException: The SMTP server has unexpectedly disconnected: 2.0.0 Ready to start TLS
+   at MailKit.Net.Smtp.SmtpStream.ReadAheadAsync(CancellationToken cancellationToken)
+   at MailKit.Net.Smtp.SmtpStream.ReadResponseAsync(CancellationToken cancellationToken)
+   at MailKit.Net.Smtp.SmtpStream.SendCommandAsync(String command, CancellationToken cancellationToken)
+   at MailKit.Net.Smtp.SmtpClient.EhloAsync(Boolean connecting, CancellationToken cancellationToken)
+   at MailKit.Net.Smtp.SmtpClient.PostConnectAsync(Stream stream, String host, Int32 port, SecureSocketOptions options, Boolean starttls, CancellationToken cancellationToken)
+   at MailKit.Net.Smtp.SmtpClient.ConnectAsync(String host, Int32 port, SecureSocketOptions options, CancellationToken cancellationToken)
+   at CaseRelayAPI.Services.AuthService.SendEmailAsync(String toEmail, String subject, String body) in C:\Users\joanf\OneDrive\Desktop\Diidee's\CaseRelayAPI\services\AuthService.cs:line 47
+   at CaseRelayAPI.Services.AuthService.AuthenticateAsync(String policeId, String passcode) in C:\Users\joanf\OneDrive\Desktop\Diidee's\CaseRelayAPI\services\AuthService.cs:line 138
+   at CaseRelayAPI.Controllers.AuthController.Login(LoginRequest request) in C:\Users\joanf\OneDrive\Desktop\Diidee's\CaseRelayAPI\controllers\AuthController.cs:line 60
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at ExceptionHandlingMiddleware.InvokeAsync(HttpContext httpContext) in C:\Users\joanf\OneDrive\Desktop\Diidee's\CaseRelayAPI\Program.cs:line 127
+2024-12-13 18:22:31.390 +01:00 [INF] Request finished HTTP/1.1 POST http://localhost:5299/api/auth/login - 500 null null 26298.9323ms
+2024-12-13 18:23:30.529 +01:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5299/api/auth/login - null null
+2024-12-13 18:23:30.529 +01:00 [INF] CORS policy execution successful.
+2024-12-13 18:23:30.530 +01:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5299/api/auth/login - 204 null null 4.0173ms
+2024-12-13 18:23:30.544 +01:00 [INF] Request starting HTTP/1.1 POST http://localhost:5299/api/auth/login - application/json 39
+2024-12-13 18:23:30.544 +01:00 [INF] CORS policy execution successful.
+2024-12-13 18:23:30.545 +01:00 [INF] Executing endpoint 'CaseRelayAPI.Controllers.AuthController.Login (CaseRelayAPI)'
+2024-12-13 18:23:30.545 +01:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(CaseRelayAPI.Controllers.LoginRequest) on controller CaseRelayAPI.Controllers.AuthController (CaseRelayAPI).
+2024-12-13 18:23:30.546 +01:00 [INF] Attempting to authenticate user with PoliceId: 77777
+2024-12-13 18:23:30.571 +01:00 [INF] Executed DbCommand (22ms) [Parameters=[@__policeId_0='?' (Size = 4000)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [u].[UserID], [u].[BadgeNumber], [u].[Clearance], [u].[CreatedAt], [u].[Department], [u].[Division], [u].[Email], [u].[FailedLoginAttempts], [u].[FirstName], [u].[IsActive], [u].[IsVerified], [u].[LastLogin], [u].[LastName], [u].[LastPasswordChange], [u].[LockoutEnd], [u].[MobilePhone], [u].[PasscodeHash], [u].[PersonalIdentificationNumber], [u].[Phone], [u].[PoliceId], [u].[Precinct], [u].[ProfileImageUrl], [u].[Rank], [u].[RequirePasswordReset], [u].[Role], [u].[SpecialUnit], [u].[Station], [u].[SupervisorId], [u].[WorkPhone]
+FROM [Users] AS [u]
+WHERE [u].[PoliceId] = @__policeId_0
+2024-12-13 18:23:30.581 +01:00 [ERR] Authentication failed for PoliceId: 77777 with error: Account is locked. Try again later.
+2024-12-13 18:23:30.581 +01:00 [INF] Executing UnauthorizedObjectResult, writing value of type '<>f__AnonymousType0`1[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2024-12-13 18:23:30.582 +01:00 [INF] Executed action CaseRelayAPI.Controllers.AuthController.Login (CaseRelayAPI) in 36.8593ms
+2024-12-13 18:23:30.582 +01:00 [INF] Executed endpoint 'CaseRelayAPI.Controllers.AuthController.Login (CaseRelayAPI)'
+2024-12-13 18:23:30.583 +01:00 [INF] Request finished HTTP/1.1 POST http://localhost:5299/api/auth/login - 401 null application/json; charset=utf-8 38.7601ms
+2024-12-13 18:24:28.869 +01:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5299/api/auth/login - null null
+2024-12-13 18:24:28.869 +01:00 [INF] CORS policy execution successful.
+2024-12-13 18:24:28.869 +01:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5299/api/auth/login - 204 null null 0.4644ms
+2024-12-13 18:24:28.872 +01:00 [INF] Request starting HTTP/1.1 POST http://localhost:5299/api/auth/login - application/json 42
+2024-12-13 18:24:28.872 +01:00 [INF] CORS policy execution successful.
+2024-12-13 18:24:28.872 +01:00 [INF] Executing endpoint 'CaseRelayAPI.Controllers.AuthController.Login (CaseRelayAPI)'
+2024-12-13 18:24:28.873 +01:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(CaseRelayAPI.Controllers.LoginRequest) on controller CaseRelayAPI.Controllers.AuthController (CaseRelayAPI).
+2024-12-13 18:24:28.874 +01:00 [INF] Attempting to authenticate user with PoliceId: 67584
+2024-12-13 18:24:28.920 +01:00 [INF] Executed DbCommand (25ms) [Parameters=[@__policeId_0='?' (Size = 4000)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [u].[UserID], [u].[BadgeNumber], [u].[Clearance], [u].[CreatedAt], [u].[Department], [u].[Division], [u].[Email], [u].[FailedLoginAttempts], [u].[FirstName], [u].[IsActive], [u].[IsVerified], [u].[LastLogin], [u].[LastName], [u].[LastPasswordChange], [u].[LockoutEnd], [u].[MobilePhone], [u].[PasscodeHash], [u].[PersonalIdentificationNumber], [u].[Phone], [u].[PoliceId], [u].[Precinct], [u].[ProfileImageUrl], [u].[Rank], [u].[RequirePasswordReset], [u].[Role], [u].[SpecialUnit], [u].[Station], [u].[SupervisorId], [u].[WorkPhone]
+FROM [Users] AS [u]
+WHERE [u].[PoliceId] = @__policeId_0
+2024-12-13 18:24:29.252 +01:00 [INF] Executed DbCommand (19ms) [Parameters=[@p1='?' (DbType = Int32), @p0='?' (DbType = DateTime2)], CommandType='"Text"', CommandTimeout='30']
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+UPDATE [Users] SET [LastLogin] = @p0
+OUTPUT 1
+WHERE [UserID] = @p1;
+2024-12-13 18:24:29.253 +01:00 [INF] User authenticated successfully with PoliceId: 67584
+2024-12-13 18:24:29.253 +01:00 [INF] Executed action CaseRelayAPI.Controllers.AuthController.Login (CaseRelayAPI) in 380.7769ms
+2024-12-13 18:24:29.254 +01:00 [INF] Executed endpoint 'CaseRelayAPI.Controllers.AuthController.Login (CaseRelayAPI)'
+2024-12-13 18:24:29.256 +01:00 [ERR] An error occurred while processing the request.
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at CaseRelayAPI.Controllers.AuthController.Login(LoginRequest request) in C:\Users\joanf\OneDrive\Desktop\Diidee's\CaseRelayAPI\controllers\AuthController.cs:line 76
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at ExceptionHandlingMiddleware.InvokeAsync(HttpContext httpContext) in C:\Users\joanf\OneDrive\Desktop\Diidee's\CaseRelayAPI\Program.cs:line 127
+2024-12-13 18:24:29.257 +01:00 [INF] Request finished HTTP/1.1 POST http://localhost:5299/api/auth/login - 500 null null 385.3896ms
+2024-12-13 18:30:32.569 +01:00 [INF] Application is shutting down...
