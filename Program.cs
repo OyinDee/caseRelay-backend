@@ -12,6 +12,12 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
+var cloudinaryConfig = builder.Configuration.GetSection("Cloudinary");
+builder.Services.AddSingleton(new CloudinaryService(
+    cloudinaryConfig["CloudName"],
+    cloudinaryConfig["ApiKey"],
+    cloudinaryConfig["ApiSecret"]
+));
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -65,7 +71,7 @@ if (app.Environment.IsDevelopment())
         c.RoutePrefix = string.Empty; 
     });
 }
-
+app.UseStaticFiles();
 app.UseHttpsRedirection();
 app.UseCors("AllowAllOrigins");
 app.UseAuthentication();

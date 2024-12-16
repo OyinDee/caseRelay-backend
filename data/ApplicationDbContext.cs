@@ -11,5 +11,7 @@ namespace CaseRelayAPI.Data
 
         public DbSet<User> Users { get; set; }
         public DbSet<Case> Cases { get; set; }
+        public DbSet<CaseComment> CaseComments { get; set; }
+        public DbSet<CaseDocument> CaseDocuments { get; set; }
     }
 }

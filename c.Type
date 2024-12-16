@@ -1,0 +1,56 @@
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    },
+    "Console": {
+      "LogLevel": {
+        "Default": "Information"
+      }
+    },
+    "File": {
+      "LogLevel": {
+        "Default": "Information"
+      },
+      "Path": "Logs/log.txt"
+    }
+  },
+  "Serilog": {
+    "WriteTo": [
+      {
+        "Name": "File",
+        "Args": {
+          "path": "Logs/log.txt",
+          "rollingInterval": "Day",
+          "retainedFileCountLimit": 7
+        }
+      }
+    ]
+  },
+  "Jwt": {
+    "SecretKey": "%JWT_SECRETKEY%",
+    "Issuer": "http://localhost:5299",
+    "Audience": "http://localhost:3000"
+  },
+  "Gmail": {
+    "Username": "%SENDER_EMAIL%",
+    "AppPassword": "%SENDER_PASSWORD%"
+  },
+  "EmailSettings": {
+    "SmtpServer": "smtp.gmail.com",
+    "SmtpPort": 587,
+    "SenderEmail": "%SENDER_EMAIL%",
+    "SenderPassword": "%SENDER_PASSWORD%",
+    "FromName": "CaseRelay"
+  },
+  "AllowedHosts": "*",
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=%DB_SERVER%,%DB_PORT%;Database=%DB_NAME%;User Id=%DB_USER%;Password=%DB_PASSWORD%;Encrypt=True;TrustServerCertificate=True;"
+  },
+  "Cloudinary": {
+    "CloudName": "%CLOUDINARY_CLOUDNAME%",
+    "ApiKey": "%CLOUDINARY_APIKEY%",
+    "ApiSecret": "%CLOUDINARY_APISECRET%"
+  }
+}
