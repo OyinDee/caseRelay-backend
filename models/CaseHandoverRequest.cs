@@ -2,6 +2,6 @@ namespace CaseRelayAPI.Models
 {
     public class CaseHandoverRequest
     {
-        public int NewOfficerId { get; set; }
+           public string NewOfficerId { get; set; }
     }
 }

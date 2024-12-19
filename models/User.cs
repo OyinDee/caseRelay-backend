@@ -1,8 +1,6 @@
-using System;
-
 namespace CaseRelayAPI.Models
 {
-    public class User
+    public partial class User
     {
         public int UserID { get; set; }
         public string PoliceId { get; set; } = string.Empty;
@@ -33,5 +31,11 @@ namespace CaseRelayAPI.Models
         public int FailedLoginAttempts { get; set; } = 0;
         public DateTime? LockoutEnd { get; set; }
         public bool RequirePasswordReset { get; set; } = false;
+    }
+
+    public partial class User
+    {
+        public string? PasswordResetToken { get; set; }
+        public DateTime? ResetTokenExpiration { get; set; }
     }
 }

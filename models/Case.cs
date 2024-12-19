@@ -29,7 +29,7 @@ public class CaseComment
     public int CommentId { get; set; }
     public int CaseId { get; set; }
     public string CommentText { get; set; } = string.Empty;
-    public string AuthorId { get; set; } = string.Empty;
+    public string AuthorId { get; set; } = "System";
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }
 

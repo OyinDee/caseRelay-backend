@@ -39,10 +39,10 @@
   },
   "EmailSettings": {
     "SmtpServer": "smtp.gmail.com",
-    "SmtpPort": 587,
+    "Port": 465,
     "SenderEmail": "%SENDER_EMAIL%",
     "SenderPassword": "%SENDER_PASSWORD%",
-    "FromName": "CaseRelay"
+    "SenderName": "CaseRelay"
   },
   "AllowedHosts": "*",
   "ConnectionStrings": {
