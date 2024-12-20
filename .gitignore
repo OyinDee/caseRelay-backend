@@ -8,7 +8,7 @@ obj/
 .vs/
 .vscode/
 
-
+.env
 ReSharper/
 
 
