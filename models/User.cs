@@ -31,10 +31,6 @@ namespace CaseRelayAPI.Models
         public int FailedLoginAttempts { get; set; } = 0;
         public DateTime? LockoutEnd { get; set; }
         public bool RequirePasswordReset { get; set; } = false;
-    }
-
-    public partial class User
-    {
         public string? PasswordResetToken { get; set; }
         public DateTime? ResetTokenExpiration { get; set; }
     }

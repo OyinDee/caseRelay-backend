@@ -1,74 +1,74 @@
 using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 using Microsoft.AspNetCore.Http;
-using System.Net;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
-public class CloudinaryService
+namespace CaseRelayAPI.Services
 {
-    private readonly Cloudinary _cloudinary;
-    private const int MaxFileSizeMB = 50; // Maximum file size limit
-    private readonly string[] AllowedFileTypes = { "pdf", "docx", "jpg", "png" };
-
-    public CloudinaryService(string cloudName, string apiKey, string apiSecret)
+    public class CloudinaryService : ICloudinaryService
     {
-        var account = new Account(cloudName, apiKey, apiSecret);
-        _cloudinary = new Cloudinary(account);
-        _cloudinary.Api.Secure = true;
-    }
-public bool ValidateFileSize(IFormFile file, long maxSizeInBytes)
-{
-    return file.Length <= maxSizeInBytes;
-}
+        private readonly Cloudinary _cloudinary;
+        private const int MaxFileSizeMB = 50; // Maximum file size limit
+        private readonly string[] AllowedFileTypes = { "pdf", "docx", "jpg", "png" };
 
-public async Task<string> UploadDocumentAsync(IFormFile file)
-{
-    ValidateFileSize(file, 10 * 1024 * 1024); // 10 MB limit
-
-
-    if (file.Length > 10 * 1024 * 1024) // Hard limit for Cloudinary free plan
-        throw new Exception($"File size too large. Got {file.Length} bytes. Maximum is 10 MB. " +
-                            "Upgrade your plan to enjoy higher limits: https://www.cloudinary.com/pricing/upgrades/file-limit");
-
-    try
-    {
-        using var stream = file.OpenReadStream();
-        var uploadParams = new RawUploadParams
+        public CloudinaryService(string cloudName, string apiKey, string apiSecret)
         {
-            File = new FileDescription(file.FileName, stream),
-            Folder = "documents"
-        };
-
-        var uploadResult = await _cloudinary.UploadAsync(uploadParams);
-
-        if (uploadResult.StatusCode != System.Net.HttpStatusCode.OK)
-        {
-            var errorMessage = uploadResult.Error?.Message ?? "Unknown upload error";
-            throw new Exception($"Cloudinary upload failed: {errorMessage}");
+            var account = new Account(cloudName, apiKey, apiSecret);
+            _cloudinary = new Cloudinary(account);
+            _cloudinary.Api.Secure = true;
         }
 
-        return uploadResult.SecureUrl.ToString();
-    }
-    catch (Exception ex)
-    {
-        throw new Exception($"File upload failed: {ex.Message}");
-    }
-}
+        public async Task<string> UploadDocumentAsync(IFormFile file)
+        {
+            ValidateFile(file);
 
-    private void ValidateFile(IFormFile file)
-    {
-        if (file == null || file.Length <= 0)
-            throw new ArgumentException("File is empty or null.");
+            if (file.Length > 10 * 1024 * 1024) // Hard limit for Cloudinary free plan
+                throw new Exception($"File size too large. Got {file.Length} bytes. Maximum is 10 MB. " +
+                                    "Upgrade your plan to enjoy higher limits: https://www.cloudinary.com/pricing/upgrades/file-limit");
 
-        if (file.Length > MaxFileSizeMB * 1024 * 1024)
-            throw new ArgumentException($"File exceeds maximum size of {MaxFileSizeMB} MB.");
+            try
+            {
+                using var stream = file.OpenReadStream();
+                var uploadParams = new RawUploadParams
+                {
+                    File = new FileDescription(file.FileName, stream),
+                    Folder = "documents"
+                };
 
-        var fileExtension = GetFileExtension(file.FileName);
-        if (!AllowedFileTypes.Contains(fileExtension))
-            throw new ArgumentException($"File type '{fileExtension}' is not allowed.");
-    }
+                var uploadResult = await _cloudinary.UploadAsync(uploadParams);
 
-    private string GetFileExtension(string fileName)
-    {
-        return fileName.Split('.').Last().ToLower();
+                if (uploadResult.StatusCode != System.Net.HttpStatusCode.OK)
+                {
+                    var errorMessage = uploadResult.Error?.Message ?? "Unknown upload error";
+                    throw new Exception($"Cloudinary upload failed: {errorMessage}");
+                }
+
+                return uploadResult.SecureUrl.ToString();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"File upload failed: {ex.Message}");
+            }
+        }
+
+        private void ValidateFile(IFormFile file)
+        {
+            if (file == null || file.Length <= 0)
+                throw new ArgumentException("File is empty or null.");
+
+            if (file.Length > MaxFileSizeMB * 1024 * 1024)
+                throw new ArgumentException($"File exceeds maximum size of {MaxFileSizeMB} MB.");
+
+            var fileExtension = GetFileExtension(file.FileName);
+            if (!AllowedFileTypes.Contains(fileExtension))
+                throw new ArgumentException($"File type '{fileExtension}' is not allowed.");
+        }
+
+        private string GetFileExtension(string fileName)
+        {
+            return fileName.Split('.').Last().ToLower();
+        }
     }
 }

@@ -6,17 +6,18 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 
+
 namespace CaseRelayAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
     public class UserController : ControllerBase
     {
-        private readonly UserService _userService;
-        private readonly CaseService _caseService; 
+        private readonly IUserService _userService;
+        private readonly ICaseService _caseService; 
         private readonly ILogger<UserController> _logger;
 
-        public UserController(UserService userService, CaseService caseService, ILogger<UserController> logger)
+        public UserController(IUserService userService, ICaseService caseService, ILogger<UserController> logger)
         {
             _userService = userService;
             _caseService = caseService;
@@ -95,7 +96,7 @@ namespace CaseRelayAPI.Controllers
 
         // Method for an admin to change a user's role
         [HttpPut("change-role/{userId}")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")] // This checks if the user has the "Admin" role
         public async Task<IActionResult> ChangeUserRole(int userId, [FromBody] string newRole)
         {
             if (string.IsNullOrEmpty(newRole))
@@ -110,6 +111,25 @@ namespace CaseRelayAPI.Controllers
             var updatedUser = await _userService.UpdateUserAsync(user);
 
             return Ok(updatedUser);
+        }
+
+        // Method for an admin to change a user's role to admin
+        [HttpPut("promote-to-admin/{userId}")]
+        [Authorize(Roles = "Admin")] // This checks if the user has the "Admin" role
+        public async Task<IActionResult> PromoteToAdmin(int userId)
+        {
+            var user = await _userService.GetUserByIdAsync(userId);
+
+            if (user == null)
+                return NotFound(new { message = "User not found." });
+
+            user.Role = "Admin";
+            var updatedUser = await _userService.UpdateUserAsync(user);
+
+            if (updatedUser == null)
+                return BadRequest(new { message = "Failed to promote user to admin." });
+
+            return Ok(new { message = "User promoted to admin successfully.", user = updatedUser });
         }
 
         // Method for an admin to delete a user
@@ -128,6 +148,19 @@ namespace CaseRelayAPI.Controllers
                 return BadRequest(new { message = "Failed to delete user." });
 
             return Ok(new { message = "User deleted successfully." });
+        }
+
+        // Method to create a new user
+        [HttpPost("create")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> CreateUser([FromBody] User newUser)
+        {
+            var createdUser = await _userService.CreateUserAsync(newUser);
+
+            if (createdUser == null)
+                return BadRequest(new { message = "Failed to create user." });
+
+            return Ok(createdUser);
         }
     }
 }

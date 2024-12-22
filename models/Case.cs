@@ -17,11 +17,13 @@ public class Case
     public string? EvidenceFiles { get; set; }
     public string? Category { get; set; }
     public bool IsArchived { get; set; } = false;
+    public int CreatedBy { get; set; }
+    public bool IsApproved { get; set; } = false;
+    public bool IsClosed { get; set; } = false;
 
     public ICollection<CaseComment> Comments { get; set; } = new List<CaseComment>();
     public ICollection<CaseDocument> Documents { get; set; } = new List<CaseDocument>();
 }
-
 
 public class CaseComment
 {
@@ -32,7 +34,6 @@ public class CaseComment
     public string AuthorId { get; set; } = "System";
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }
-
 
 public class CaseDocument
 {

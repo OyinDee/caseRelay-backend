@@ -22,162 +22,77 @@ namespace CaseRelayAPI.Services
     {
         private readonly ApplicationDbContext _context;
         private readonly IConfiguration _configuration;
-        private readonly EmailSettings _emailSettings;
+        private readonly EmailService _emailService;
 
-        public AuthService(ApplicationDbContext context, IConfiguration configuration)
+        public AuthService(ApplicationDbContext context, IConfiguration configuration, EmailService emailService)
         {
             _context = context;
             _configuration = configuration;
-            _emailSettings = configuration.GetSection("EmailSettings").Get<EmailSettings>();
+            _emailService = emailService;
         }
 
-       private async Task SendEmailAsync(string toEmail, string subject, string body)
-{
-    var emailMessage = new MimeMessage();
-    emailMessage.From.Add(new MailboxAddress(_emailSettings.SenderName, _emailSettings.SenderEmail));
-    emailMessage.To.Add(new MailboxAddress("Recipient Name", toEmail));
-    emailMessage.Subject = subject;
-
-    var bodyBuilder = new BodyBuilder { HtmlBody = body };
-    emailMessage.Body = bodyBuilder.ToMessageBody();
-
-    using (var client = new SmtpClient())
-    {
-        try
+        public async Task<AuthResult> InitiateForgotPasswordAsync(string email)
         {
-            // Log to track the connection attempt
-            Console.WriteLine("Connecting to SMTP server...");
-            await client.ConnectAsync(_emailSettings.SmtpServer, _emailSettings.Port, true);  // false means plain connection, use true for SSL/TLS
-            Console.WriteLine("Authenticated.");
+            try
+            {
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+                if (user == null)
+                    return AuthResult.Failure("No user found with this email.");
 
-            await client.AuthenticateAsync(_emailSettings.SenderEmail, _emailSettings.SenderPassword);
-            Console.WriteLine("Email authenticated.");
+                var resetToken = Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
+                user.PasswordResetToken = resetToken;
+                user.ResetTokenExpiration = DateTime.UtcNow.AddHours(1);
 
-            await client.SendAsync(emailMessage);
-            Console.WriteLine("Email sent.");
+                await _context.SaveChangesAsync();
 
-            await client.DisconnectAsync(true);  // Ensure clean disconnect
-            Console.WriteLine("Disconnected from SMTP server.");
+                var resetLink = $"http://localhost:3000/reset-password?token={Uri.EscapeDataString(resetToken)}&email={Uri.EscapeDataString(email)}";
+                await _emailService.SendPasswordResetEmailAsync(user.Email, resetLink);
+
+                return AuthResult.Success(user);
+            }
+            catch (Exception ex)
+            {
+                return AuthResult.Failure("Failed to process password reset request.");
+            }
         }
-        catch (Exception ex)
+
+        public async Task<AuthResult> ResetPasswordAsync(string email, string resetToken, string newPasscode)
         {
-            Console.WriteLine($"Error while sending email: {ex.Message}");
-            throw;  // Optionally rethrow or handle depending on your needs
+            try
+            {
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+                if (user == null)
+                    return AuthResult.Failure("No user found with this email.");
+
+                if (string.IsNullOrEmpty(user.PasswordResetToken) || user.PasswordResetToken != resetToken || user.ResetTokenExpiration < DateTime.UtcNow)
+                    return AuthResult.Failure("Invalid or expired reset token.");
+
+                user.PasscodeHash = BCrypt.Net.BCrypt.HashPassword(newPasscode);
+                user.PasswordResetToken = null;
+                user.ResetTokenExpiration = null;
+                user.LastPasswordChange = DateTime.UtcNow;
+
+                await _context.SaveChangesAsync();
+
+                var emailBody = $@"
+                <html>
+                <body style='font-family: Arial, sans-serif; color: #000000;'>
+                    <h2>Password Successfully Reset</h2>
+                    <p>Dear {user.FirstName},</p>
+                    <p>Your password has been successfully reset. If you did not make this change, please contact support immediately.</p>
+                    <p>Best regards,<br>CaseRelay Team</p>
+                </body>
+                </html>";
+
+                await _emailService.SendEmailAsync(user.Email, "Password Reset Confirmation", emailBody);
+
+                return AuthResult.Success(user);
+            }
+            catch (Exception ex)
+            {
+                return AuthResult.Failure("Failed to reset password.");
+            }
         }
-    }
-}
-
- public async Task<AuthResult> InitiateForgotPasswordAsync(string email)
-{
-    try
-    {
-        Console.WriteLine($"Initiating password reset for email: {email}");
-
-        var user = await _context.Users
-            .FirstOrDefaultAsync(u => u.Email == email);
-
-        if (user == null)
-        {
-            Console.WriteLine($"No user found with email: {email}");
-            return AuthResult.Failure("No user found with this email.");
-        }
-
-        Console.WriteLine($"User found: {user.FirstName} {user.LastName}");
-        
-        var resetToken = Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
-        user.PasswordResetToken = resetToken;
-        user.ResetTokenExpiration = DateTime.UtcNow.AddHours(1);
-
-        Console.WriteLine($"Generated reset token and set expiration: {user.ResetTokenExpiration}");
-
-        await _context.SaveChangesAsync();
-        Console.WriteLine("Saved reset token and expiration time to the database.");
-
-        var resetLink = $"http://localhost:3000/reset-password?token={Uri.EscapeDataString(resetToken)}&email={Uri.EscapeDataString(email)}";
-        var emailBody = $@"
-            <html>
-            <body style='font-family: Arial, sans-serif; color: #000000;'>
-                <h2>Password Reset Request</h2>
-                <p>Dear {user.FirstName},</p>
-                <p>You have requested to reset your password. Click the link below to reset your password. This link will expire in 1 hour:</p>
-                <p><a href='{resetLink}'>Reset Password</a></p>
-                <p>If you did not request a password reset, please ignore this email or contact support if you have concerns.</p>
-                <p>Best regards,<br>CaseRelay Team</p>
-            </body>
-            </html>";
-
-        Console.WriteLine($"Sending reset password email to: {user.Email}");
-        await SendEmailAsync(user.Email, "Password Reset Request", emailBody);
-
-        Console.WriteLine($"Password reset email sent to: {user.Email}");
-
-        return AuthResult.Success(user);
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"Error in InitiateForgotPasswordAsync: {ex.Message}");
-        return AuthResult.Failure("Failed to process password reset request.");
-    }
-}
-
-public async Task<AuthResult> ResetPasswordAsync(string email, string resetToken, string newPasscode)
-{
-    try
-    {
-        Console.WriteLine($"Attempting to reset password for email: {email} with token: {resetToken}");
-
-        var user = await _context.Users
-            .FirstOrDefaultAsync(u => u.Email == email);
-
-        if (user == null)
-        {
-            Console.WriteLine($"No user found with email: {email}");
-            return AuthResult.Failure("No user found with this email.");
-        }
-
-        if (string.IsNullOrEmpty(user.PasswordResetToken) || user.PasswordResetToken != resetToken || user.ResetTokenExpiration < DateTime.UtcNow)
-        {
-            Console.WriteLine($"Invalid or expired reset token for email: {email}");
-            return AuthResult.Failure("Invalid or expired reset token.");
-        }
-
-        Console.WriteLine("Reset token validated, updating password...");
-
-        user.PasscodeHash = BCrypt.Net.BCrypt.HashPassword(newPasscode);
-
-        Console.WriteLine("Passcode hash updated.");
-
-        user.PasswordResetToken = null;
-        user.ResetTokenExpiration = null;
-        user.LastPasswordChange = DateTime.UtcNow;
-
-        Console.WriteLine("Password reset token cleared, saving changes.");
-
-        await _context.SaveChangesAsync();
-
-        var emailBody = $@"
-            <html>
-            <body style='font-family: Arial, sans-serif; color: #000000;'>
-                <h2>Password Successfully Reset</h2>
-                <p>Dear {user.FirstName},</p>
-                <p>Your password has been successfully reset. If you did not make this change, please contact support immediately.</p>
-                <p>Best regards,<br>CaseRelay Team</p>
-            </body>
-            </html>";
-
-        Console.WriteLine($"Sending confirmation email to: {user.Email}");
-        await SendEmailAsync(user.Email, "Password Reset Confirmation", emailBody);
-
-        Console.WriteLine($"Password reset confirmation email sent to: {user.Email}");
-
-        return AuthResult.Success(user);
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"Error in ResetPasswordAsync: {ex.Message}");
-        return AuthResult.Failure("Failed to reset password.");
-    }
-}
 
         public async Task<AuthResult> RegisterUserAsync(User user, string passcode)
         {
@@ -212,7 +127,7 @@ public async Task<AuthResult> ResetPasswordAsync(string email, string resetToken
                     </body>
                     </html>";
 
-                await SendEmailAsync(user.Email, "Welcome to CaseRelay!", emailBody);
+                await _emailService.SendEmailAsync(user.Email, "Welcome to CaseRelay!", emailBody);
 
                 return AuthResult.Success(user, null);
             }
@@ -265,7 +180,7 @@ public async Task<AuthResult> ResetPasswordAsync(string email, string resetToken
                         </body>
                         </html>";
 
-                    await SendEmailAsync(user.Email, "Account Locked", emailBody);
+                    await _emailService.SendEmailAsync(user.Email, "Account Locked", emailBody);
                 }
 
                 await _context.SaveChangesAsync();
@@ -289,7 +204,7 @@ public async Task<AuthResult> ResetPasswordAsync(string email, string resetToken
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.PoliceId),
                 new Claim(ClaimTypes.Name, $"{user.FirstName} {user.LastName}"),
-                new Claim(ClaimTypes.Role, user.Role ?? "Unknown"),
+                new Claim(ClaimTypes.Role, user.Role ?? "Unknown"), // Role claim
                 new Claim("department", user.Department ?? "Unknown"),
                 new Claim("userId", user.UserID.ToString())
             };

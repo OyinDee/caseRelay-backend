@@ -27,13 +27,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <!-- Only include appsettings.json, which might be necessary -->
+    <!-- Include appsettings.json -->
     <None Include="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 
-  <!-- Custom publish targets to avoid potential issues -->
+  <!-- Custom publish targets -->
   <Target Name="BeforePublish">
     <Exec Command="echo Before Publish: Cleaning Files" />
   </Target>
