@@ -136,11 +136,6 @@ try
     builder.Services.AddScoped<IUserService, UserService>();
     builder.Services.AddScoped<EmailService>();
     builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-
-    // Logging configuration
-    builder.Logging.ClearProviders();
-    builder.Logging.AddConsole();
-    builder.Logging.SetMinimumLevel(LogLevel.Information);
 }
 catch (Exception ex)
 {
@@ -209,19 +204,14 @@ try
     app.UseAuthentication(); // Enable JWT Authentication
     app.UseAuthorization(); // Enable Authorization
 
-    // Map Controllers
-    app.MapControllers();
-
-    // Run the app
-    app.Run();
-}
-catch (Exception ex)
+    app.MapGet("/health", () => {
+        return Results.Ok(new {
+            Status = "Healthy",
+            Environment = app.Environment.EnvironmentName,
+            Time = DateTime.UtcNow,
+            Assembly = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version?.ToString()
+        });
     });
-{
-    Console.WriteLine($"Error during runtime: {ex.Message}");
-    throw;
-}
-
 
     app.MapControllers();
 
