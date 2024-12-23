@@ -196,7 +196,7 @@ namespace CaseRelayAPI.Services
 
         private string GenerateJwtToken(User user)
         {
-            var secretKey = _configuration["Jwt:SecretKey"] ?? "defaultSecretKey";
+            var secretKey = _configuration["Jwt_SECRETKEY"] ?? "defaultSecretKey";
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 

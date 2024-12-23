@@ -8,12 +8,12 @@ using CaseRelayAPI.Models;
 
 public class EmailService
 {
-    private readonly EmailSettings _emailSettings;
+    private readonly IConfiguration _configuration;
     private readonly ILogger<EmailService> _logger;
 
     public EmailService(IConfiguration configuration, ILogger<EmailService> logger)
     {
-        _emailSettings = configuration.GetSection("EmailSettings").Get<EmailSettings>();
+        _configuration = configuration;
         _logger = logger;
 
         // Log the values for clarity (this should be done cautiously in production environments)
@@ -22,8 +22,18 @@ public class EmailService
 
     public async Task SendEmailAsync(string toEmail, string subject, string body)
     {
+        var emailSettings = new
+        {
+            SmtpServer = _configuration["EMAIL_SMTP_SERVER"],
+            Port = int.Parse(_configuration["EMAIL_SMTP_PORT"]),
+            SenderEmail = _configuration["EMAIL_SENDER"],
+            SenderPassword = _configuration["EMAIL_PASSWORD"],
+            SenderName = _configuration["EMAIL_FROM_NAME"],
+            UseSsl = true
+        };
+
         var message = new MimeMessage();
-        message.From.Add(new MailboxAddress(_emailSettings.SenderName, _emailSettings.SenderEmail));
+        message.From.Add(new MailboxAddress(emailSettings.SenderName, emailSettings.SenderEmail));
         message.To.Add(new MailboxAddress("Recipient", toEmail));
         message.Subject = subject;
 
@@ -42,10 +52,10 @@ public class EmailService
 
             _logger.LogInformation("Connecting to SMTP server...");
 
-            await client.ConnectAsync(_emailSettings.SmtpServer, _emailSettings.Port, _emailSettings.UseSsl);
+            await client.ConnectAsync(emailSettings.SmtpServer, emailSettings.Port, emailSettings.UseSsl);
             _logger.LogInformation("Connected to SMTP server.");
 
-            await client.AuthenticateAsync(_emailSettings.SenderEmail, _emailSettings.SenderPassword);
+            await client.AuthenticateAsync(emailSettings.SenderEmail, emailSettings.SenderPassword);
             _logger.LogInformation("Authenticated successfully.");
 
             await client.SendAsync(message);

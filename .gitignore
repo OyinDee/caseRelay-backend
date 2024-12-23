@@ -1,34 +1,35 @@
-
+# .NET Core
 bin/
 obj/
-
+publish/
 *.user
+*.userosscache
 *.suo
-
+*.userprefs
 .vs/
-.vscode/
 
+# Environment files
 .env
-ReSharper/
+appsettings.json
+appsettings.Development.json
+appsettings.Production.json
 
+# Logs
+Logs/
+*.log
 
+# IDE
+.vscode/
+.idea/
+
+# Dependencies
 packages/
 *.nupkg
 
+# Operating System Files
+.DS_Store
+Thumbs.db
 
-appsettings.Development.json
-appsettings.json
-appsettings.Secret.json
-
-
-*.dll
-*.exe
-*.pdb
-*.bak
-*.sql
-
-bin/Debug/net8.0/Azure.Core.dll
-bin/Debug/net8.0/Azure.Identity.dll
-bin/Debug/net8.0/BCrypt.Net-Next.dll
-bin/Debug/net8.0/Microsoft.AspNetCore.Authentication.JwtBearer.dll
+# Sensitive Data
+Data/SeedData.cs
 
