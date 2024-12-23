@@ -153,9 +153,6 @@ try
         var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         db.Database.Migrate();
         
-        // Add seed data
-        await SeedData.InitializeAsync(scope.ServiceProvider);
-
         // Check database connection
         try
         {
