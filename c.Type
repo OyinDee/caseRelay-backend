@@ -31,7 +31,7 @@
   "Jwt": {
     "SecretKey": "%JWT_SECRETKEY%",
     "Issuer": "http://localhost:5299",
-    "Audience": "http://localhost:3000"
+    "Audience": "https://caserelay.vercel.app"
   },
   "Gmail": {
     "Username": "%SENDER_EMAIL%",

@@ -13,7 +13,7 @@ namespace CaseRelayAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     [Migration("20241214040432_latest")]
-    partial class latest
+    partial class LatestMigration : Migration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

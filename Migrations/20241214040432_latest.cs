@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CaseRelayAPI.Migrations
 {
     /// <inheritdoc />
-    public partial class latest : Migration
+    public partial class LatestMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

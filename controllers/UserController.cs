@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 
-
 namespace CaseRelayAPI.Controllers
 {
+    /// <summary>
+    /// Controller for managing user-related operations
+    /// </summary>
     [ApiController]
     [Route("api/[controller]")]
     public class UserController : ControllerBase
@@ -24,7 +26,10 @@ namespace CaseRelayAPI.Controllers
             _logger = logger;
         }
 
-        // Method to get the profile of the logged-in user
+        /// <summary>
+        /// Gets the profile of the logged-in user.
+        /// </summary>
+        /// <returns>The profile of the logged-in user.</returns>
         [HttpGet("profile")]
         [Authorize]
         public async Task<IActionResult> GetProfile()
@@ -41,7 +46,11 @@ namespace CaseRelayAPI.Controllers
             return Ok(user);
         }
 
-        // Method to get user profile by user ID
+        /// <summary>
+        /// Gets the profile of a user by user ID.
+        /// </summary>
+        /// <param name="userId">The ID of the user.</param>
+        /// <returns>The profile of the user.</returns>
         [HttpGet("{userId}")]
         [Authorize]
         public async Task<IActionResult> GetUser(int userId)
@@ -54,7 +63,11 @@ namespace CaseRelayAPI.Controllers
             return Ok(user);
         }
 
-        // Method to get all cases associated with a user
+        /// <summary>
+        /// Gets all cases associated with a user.
+        /// </summary>
+        /// <param name="userId">The ID of the user.</param>
+        /// <returns>A list of cases associated with the user.</returns>
         [HttpGet("{userId}/cases")]
         [Authorize]
         public async Task<IActionResult> GetCasesForUser(int userId)
@@ -67,7 +80,11 @@ namespace CaseRelayAPI.Controllers
             return Ok(cases);
         }
 
-        // Method to update the user profile
+        /// <summary>
+        /// Updates the profile of the logged-in user.
+        /// </summary>
+        /// <param name="user">The updated user profile.</param>
+        /// <returns>The updated user profile.</returns>
         [HttpPut("update-profile")]
         [Authorize]
         public async Task<IActionResult> UpdateProfile([FromBody] User user)
@@ -94,9 +111,14 @@ namespace CaseRelayAPI.Controllers
             return Ok(updatedUser);
         }
 
-        // Method for an admin to change a user's role
+        /// <summary>
+        /// Changes the role of a user.
+        /// </summary>
+        /// <param name="userId">The ID of the user.</param>
+        /// <param name="newRole">The new role for the user.</param>
+        /// <returns>The updated user profile.</returns>
         [HttpPut("change-role/{userId}")]
-        [Authorize(Roles = "Admin")] // This checks if the user has the "Admin" role
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> ChangeUserRole(int userId, [FromBody] string newRole)
         {
             if (string.IsNullOrEmpty(newRole))
@@ -113,9 +135,13 @@ namespace CaseRelayAPI.Controllers
             return Ok(updatedUser);
         }
 
-        // Method for an admin to change a user's role to admin
+        /// <summary>
+        /// Promotes a user to admin.
+        /// </summary>
+        /// <param name="userId">The ID of the user.</param>
+        /// <returns>The updated user profile.</returns>
         [HttpPut("promote-to-admin/{userId}")]
-        [Authorize(Roles = "Admin")] // This checks if the user has the "Admin" role
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> PromoteToAdmin(int userId)
         {
             var user = await _userService.GetUserByIdAsync(userId);
@@ -132,7 +158,11 @@ namespace CaseRelayAPI.Controllers
             return Ok(new { message = "User promoted to admin successfully.", user = updatedUser });
         }
 
-        // Method for an admin to delete a user
+        /// <summary>
+        /// Deletes a user.
+        /// </summary>
+        /// <param name="userId">The ID of the user.</param>
+        /// <returns>A message indicating the result of the operation.</returns>
         [HttpDelete("delete/{userId}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteUser(int userId)
@@ -150,7 +180,11 @@ namespace CaseRelayAPI.Controllers
             return Ok(new { message = "User deleted successfully." });
         }
 
-        // Method to create a new user
+        /// <summary>
+        /// Creates a new user.
+        /// </summary>
+        /// <param name="newUser">The new user to create.</param>
+        /// <returns>The created user profile.</returns>
         [HttpPost("create")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateUser([FromBody] User newUser)

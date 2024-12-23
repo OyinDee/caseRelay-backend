@@ -8,6 +8,9 @@ using CaseRelayAPI.Dtos;
 
 namespace CaseRelayAPI.Controllers
 {
+    /// <summary>
+    /// Controller for managing authentication-related operations
+    /// </summary>
     [ApiController]
     [Route("api/[controller]")]
     public class AuthController : ControllerBase
@@ -21,6 +24,11 @@ namespace CaseRelayAPI.Controllers
             _logger = logger;
         }
 
+        /// <summary>
+        /// Registers a new user.
+        /// </summary>
+        /// <param name="request">The user registration details.</param>
+        /// <returns>A message indicating the result of the registration.</returns>
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] UserRegistrationDto request)
         {
@@ -47,6 +55,11 @@ namespace CaseRelayAPI.Controllers
                 : BadRequest(new { message = result.ErrorMessage });
         }
 
+        /// <summary>
+        /// Authenticates a user and generates a JWT token.
+        /// </summary>
+        /// <param name="request">The user login details.</param>
+        /// <returns>The JWT token and user details.</returns>
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] UserLoginDto request)
         {
@@ -85,6 +98,11 @@ namespace CaseRelayAPI.Controllers
             });
         }
 
+        /// <summary>
+        /// Initiates the forgot password process.
+        /// </summary>
+        /// <param name="request">The forgot password request details.</param>
+        /// <returns>A message indicating the result of the operation.</returns>
         [HttpPost("forgot-password")]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto request)
         {
@@ -97,6 +115,11 @@ namespace CaseRelayAPI.Controllers
                 : BadRequest(new { message = result.ErrorMessage });
         }
 
+        /// <summary>
+        /// Resets the user's password.
+        /// </summary>
+        /// <param name="request">The reset password request details.</param>
+        /// <returns>A message indicating the result of the operation.</returns>
         [HttpPost("reset-password")]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto request)
         {
@@ -109,6 +132,11 @@ namespace CaseRelayAPI.Controllers
                 : BadRequest(new { message = result.ErrorMessage });
         }
 
+        /// <summary>
+        /// Changes the user's passcode.
+        /// </summary>
+        /// <param name="request">The change passcode request details.</param>
+        /// <returns>A message indicating the result of the operation.</returns>
         [Authorize]
         [HttpPost("change-passcode")]
         public async Task<IActionResult> ChangePasscode([FromBody] ChangePasscodeDto request)
@@ -125,6 +153,11 @@ namespace CaseRelayAPI.Controllers
                 : BadRequest(new { message = result.ErrorMessage });
         }
 
+        /// <summary>
+        /// Updates the user's profile.
+        /// </summary>
+        /// <param name="request">The user profile update details.</param>
+        /// <returns>A message indicating the result of the operation.</returns>
         [Authorize]
         [HttpPut("update-profile")]
         public async Task<IActionResult> UpdateProfile([FromBody] UserUpdateDto request)
@@ -142,6 +175,10 @@ namespace CaseRelayAPI.Controllers
                 : BadRequest(new { message = result.ErrorMessage });
         }
 
+        /// <summary>
+        /// Deletes the user's account.
+        /// </summary>
+        /// <returns>A message indicating the result of the operation.</returns>
         [Authorize]
         [HttpDelete("delete-account")]
         public async Task<IActionResult> DeleteAccount()

@@ -12,7 +12,6 @@ using System.Threading.Tasks;
 using CaseRelayAPI.Data;
 using Microsoft.Data.SqlClient;
 
-
 namespace CaseRelayAPI.Controllers
 {
     /// <summary>
@@ -42,7 +41,10 @@ namespace CaseRelayAPI.Controllers
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        // Endpoint to retrieve all cases for the logged-in user
+        /// <summary>
+        /// Retrieves all cases for the logged-in user.
+        /// </summary>
+        /// <returns>A list of cases associated with the logged-in user.</returns>
         [HttpGet("user")]
         [Authorize]
         public async Task<IActionResult> GetCasesByUserId()
@@ -62,7 +64,11 @@ namespace CaseRelayAPI.Controllers
             return Ok(cases);
         }
 
-        // Endpoint to retrieve a case by its ID
+        /// <summary>
+        /// Retrieves a case by its ID.
+        /// </summary>
+        /// <param name="caseId">The ID of the case.</param>
+        /// <returns>The details of the case.</returns>
         [HttpGet("{caseId}")]
         public async Task<IActionResult> GetCaseById(int caseId)
         {
@@ -73,7 +79,11 @@ namespace CaseRelayAPI.Controllers
             return Ok(caseDetails);
         }
 
-        // Endpoint to create a new case
+        /// <summary>
+        /// Creates a new case.
+        /// </summary>
+        /// <param name="newCase">The new case to create.</param>
+        /// <returns>A message indicating the result of the operation.</returns>
         [HttpPost]
         [Authorize]
         public async Task<IActionResult> CreateCase([FromBody] Case newCase)
@@ -100,7 +110,11 @@ namespace CaseRelayAPI.Controllers
             return Ok(new { message = "Case created successfully." });
         }
 
-        // Endpoint for admins to approve a case
+        /// <summary>
+        /// Approves a case.
+        /// </summary>
+        /// <param name="caseId">The ID of the case to approve.</param>
+        /// <returns>A message indicating the result of the operation.</returns>
         [HttpPatch("{caseId}/approve")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> ApproveCase(int caseId)
@@ -114,7 +128,12 @@ namespace CaseRelayAPI.Controllers
             return Ok(new { message = "Case approved successfully." });
         }
 
-        // Endpoint to update a case
+        /// <summary>
+        /// Updates a case.
+        /// </summary>
+        /// <param name="caseId">The ID of the case to update.</param>
+        /// <param name="updatedCase">The updated case details.</param>
+        /// <returns>A message indicating the result of the operation.</returns>
         [HttpPut("{caseId}")]
         public async Task<IActionResult> UpdateCase(int caseId, [FromBody] Case updatedCase)
         {
@@ -126,7 +145,10 @@ namespace CaseRelayAPI.Controllers
             return Ok(new { message = "Case updated successfully." });
         }
 
-        // Endpoint to retrieve all cases
+        /// <summary>
+        /// Retrieves all cases.
+        /// </summary>
+        /// <returns>A list of all cases.</returns>
         [HttpGet("all")]
         public async Task<IActionResult> GetAllCases()
         {
@@ -146,7 +168,11 @@ namespace CaseRelayAPI.Controllers
             }
         }
 
-        // Endpoint to delete a case
+        /// <summary>
+        /// Deletes a case.
+        /// </summary>
+        /// <param name="caseId">The ID of the case to delete.</param>
+        /// <returns>A message indicating the result of the operation.</returns>
         [HttpDelete("{caseId}")]
         public async Task<IActionResult> DeleteCase(int caseId)
         {
@@ -157,7 +183,12 @@ namespace CaseRelayAPI.Controllers
             return Ok(new { message = "Case deleted successfully." });
         }
 
-        // Endpoint to hand over a case
+        /// <summary>
+        /// Hands over a case to a new officer.
+        /// </summary>
+        /// <param name="caseId">The ID of the case to hand over.</param>
+        /// <param name="request">The handover request details.</param>
+        /// <returns>A message indicating the result of the operation.</returns>
         [HttpPost("handover/{caseId}")]
         public async Task<IActionResult> HandoverCase(int caseId, [FromBody] CaseHandoverRequest request)
         {
@@ -175,61 +206,74 @@ namespace CaseRelayAPI.Controllers
             return Ok(new { message = "Case successfully handed over to the new officer." });
         }
 
-        // Endpoint to add a document to a case
-        [HttpPost("{caseId}/document")]
-        public async Task<IActionResult> AddDocument(int caseId, [FromForm] IFormFile file)
+        /// <summary>
+        /// Adds a document to a case.
+        /// </summary>
+        /// <param name="caseId">The ID of the case.</param>
+        /// <param name="file">The document file to add.</param>
+        /// <returns>A message indicating the result of the operation.</returns>
+[HttpPost("{caseId}/document")]
+[Consumes("multipart/form-data")]
+[ApiExplorerSettings(IgnoreApi = true)]
+public async Task<IActionResult> AddDocument(int caseId, [FromForm] IFormFile file)
+{
+    _logger.LogInformation("Starting AddDocument for caseId: {CaseId}", caseId);
+
+    if (file == null || file.Length == 0)
+    {
+        _logger.LogWarning("AddDocument failed: Invalid file for caseId: {CaseId}", caseId);
+        return BadRequest(new { message = "Invalid file." });
+    }
+
+    string fileUrl;
+
+    try
+    {
+        _logger.LogInformation("Attempting to upload file to cloud for caseId: {CaseId}", caseId);
+        fileUrl = await _cloudinaryService.UploadDocumentAsync(file);
+    }
+    catch (Exception ex)
+    {
+        _logger.LogError(ex, "Error uploading file to cloud for caseId: {CaseId}", caseId);
+        return StatusCode(500, new { message = ex.Message });
+    }
+
+    var document = new CaseDocument
+    {
+        CaseId = caseId,
+        FileName = file.FileName,
+        FileUrl = fileUrl,
+        UploadedBy = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "Unknown"
+    };
+
+    try
+    {
+        _logger.LogInformation("Attempting to save document to database for caseId: {CaseId}", caseId);
+        var success = await _caseService.AddDocumentAsync(document);
+
+        if (!success)
         {
-            _logger.LogInformation("Starting AddDocument for caseId: {CaseId}", caseId);
-
-            if (file == null || file.Length == 0)
-            {
-                _logger.LogWarning("AddDocument failed: Invalid file for caseId: {CaseId}", caseId);
-                return BadRequest(new { message = "Invalid file." });
-            }
-
-            string fileUrl;
-
-            try
-            {
-                _logger.LogInformation("Attempting to upload file to cloud for caseId: {CaseId}", caseId);
-                fileUrl = await _cloudinaryService.UploadDocumentAsync(file);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error uploading file to cloud for caseId: {CaseId}", caseId);
-                return StatusCode(500, new { message = ex.Message });
-            }
-
-            var document = new CaseDocument
-            {
-                CaseId = caseId,
-                FileName = file.FileName,
-                FileUrl = fileUrl,
-                UploadedBy = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "Unknown"
-            };
-
-            try
-            {
-                _logger.LogInformation("Attempting to save document to database for caseId: {CaseId}", caseId);
-                var success = await _caseService.AddDocumentAsync(document);
-
-                if (!success)
-                {
-                    _logger.LogWarning("Failed to save document to database for caseId: {CaseId}", caseId);
-                    return BadRequest(new { message = "Error saving document to database." });
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Exception occurred while saving document to database for caseId: {CaseId}", caseId);
-                return StatusCode(500, new { message = ex.Message });
-            }
-
-            _logger.LogInformation("Document uploaded and saved successfully for caseId: {CaseId}, FileUrl: {FileUrl}", caseId, fileUrl);
-            return Ok(new { message = "Document uploaded successfully.", fileUrl });
+            _logger.LogWarning("Failed to save document to database for caseId: {CaseId}", caseId);
+            return BadRequest(new { message = "Error saving document to database." });
         }
+    }
+    catch (Exception ex)
+    {
+        _logger.LogError(ex, "Exception occurred while saving document to database for caseId: {CaseId}", caseId);
+        return StatusCode(500, new { message = ex.Message });
+    }
 
-        // Endpoint to add a comment to a case
+    _logger.LogInformation("Document uploaded and saved successfully for caseId: {CaseId}, FileUrl: {FileUrl}", caseId, fileUrl);
+    return Ok(new { message = "Document uploaded successfully.", fileUrl });
+}
+
+
+        /// <summary>
+        /// Adds a comment to a case.
+        /// </summary>
+        /// <param name="caseId">The ID of the case.</param>
+        /// <param name="newComment">The new comment to add.</param>
+        /// <returns>The updated case details.</returns>
         [HttpPost("{caseId}/comment")]
         public async Task<IActionResult> AddComment(int caseId, [FromBody] CaseComment newComment)
         {
@@ -248,7 +292,11 @@ namespace CaseRelayAPI.Controllers
             return Ok(new { message = "Comment added successfully.", data = updatedCase });
         }
 
-        // Endpoint for getting case details with additional information
+        /// <summary>
+        /// Retrieves case details with additional information.
+        /// </summary>
+        /// <param name="caseId">The ID of the case.</param>
+        /// <returns>The case details with additional information.</returns>
         [HttpGet("{caseId}/extras")]
         public async Task<IActionResult> GetCaseByIdWithExtras(int caseId)
         {
@@ -259,7 +307,11 @@ namespace CaseRelayAPI.Controllers
             return Ok(caseDetails);
         }
 
-        // Endpoint to search cases by keyword
+        /// <summary>
+        /// Searches cases by keyword.
+        /// </summary>
+        /// <param name="keyword">The keyword to search for.</param>
+        /// <returns>A list of cases matching the keyword.</returns>
         [HttpGet("search")]
         public async Task<IActionResult> SearchCases([FromQuery] string keyword)
         {
@@ -278,7 +330,10 @@ namespace CaseRelayAPI.Controllers
             return Ok(cases);
         }
 
-        // Endpoint to get case statistics
+        /// <summary>
+        /// Retrieves case statistics.
+        /// </summary>
+        /// <returns>The case statistics.</returns>
         [HttpGet("statistics")]
         public async Task<IActionResult> GetCaseStatistics()
         {
@@ -292,7 +347,12 @@ namespace CaseRelayAPI.Controllers
             return Ok(statistics);
         }
 
-        // Endpoint to update the status of a case
+        /// <summary>
+        /// Updates the status of a case.
+        /// </summary>
+        /// <param name="caseId">The ID of the case.</param>
+        /// <param name="request">The status update request details.</param>
+        /// <returns>A message indicating the result of the operation.</returns>
         [HttpPatch("{caseId}/status")]
         public async Task<IActionResult> UpdateCaseStatus(int caseId, [FromBody] CaseStatusUpdateRequest request)
         {
@@ -311,7 +371,12 @@ namespace CaseRelayAPI.Controllers
             return Ok(new { message = "Case status updated successfully." });
         }
 
-        // Endpoint to assign a case to an officer
+        /// <summary>
+        /// Assigns a case to an officer.
+        /// </summary>
+        /// <param name="caseId">The ID of the case.</param>
+        /// <param name="request">The assignment request details.</param>
+        /// <returns>A message indicating the result of the operation.</returns>
         [HttpPatch("{caseId}/assign")]
         public async Task<IActionResult> AssignCaseToOfficer(int caseId, [FromBody] CaseAssignmentRequest request)
         {

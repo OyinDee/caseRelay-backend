@@ -45,7 +45,7 @@ namespace CaseRelayAPI.Services
 
                 await _context.SaveChangesAsync();
 
-                var resetLink = $"http://localhost:3000/reset-password?token={Uri.EscapeDataString(resetToken)}&email={Uri.EscapeDataString(email)}";
+                var resetLink = $"https://caserelay.vercel.app/reset-password?token={Uri.EscapeDataString(resetToken)}&email={Uri.EscapeDataString(email)}";
                 await _emailService.SendPasswordResetEmailAsync(user.Email, resetLink);
 
                 return AuthResult.Success(user);
