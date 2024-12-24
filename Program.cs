@@ -203,6 +203,28 @@ try
 
     // Fix middleware order
     app.UseRouting();
+
+    // Add this after app.UseRouting()
+    app.Use(async (context, next) =>
+    {
+        try
+        {
+            await next();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Unhandled error: {ex.Message}");
+            Console.WriteLine($"Stack trace: {ex.StackTrace}");
+            
+            context.Response.StatusCode = 500;
+            context.Response.ContentType = "application/json";
+            await context.Response.WriteAsJsonAsync(new { 
+                error = "An error occurred", 
+                detail = ex.Message 
+            });
+        }
+    });
+
     app.UseCors("AllowAllOrigins"); // Move CORS here
     app.UseAuthentication();
     app.UseAuthorization();
