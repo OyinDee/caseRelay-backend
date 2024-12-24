@@ -199,7 +199,12 @@ try
 
     app.UseMiddleware<ExceptionHandlingMiddleware>(); // Custom middleware for exception handling
     app.UseHttpsRedirection(); // Redirect HTTP to HTTPS
-    app.UseStaticFiles(); // Serve static files
+    app.UseDefaultFiles();  // Add this line before UseStaticFiles
+    app.UseStaticFiles(new StaticFileOptions
+    {
+        ServeUnknownFileTypes = true,
+        DefaultContentType = "application/octet-stream"
+    }); // Serve static files
 
     // Fix middleware order
     app.UseRouting();
