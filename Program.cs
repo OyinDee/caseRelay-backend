@@ -75,36 +75,35 @@ try
         throw new InvalidOperationException("JWT_SECRETKEY environment variable is not set");
     }
 
-    // Decode the Base64 key instead of plain UTF8
-    var keyBytes = Convert.FromBase64String(jwtKey);
-    Console.WriteLine($"Base64-decoded JWT Key length in bits: {keyBytes.Length * 8}");
-
-    if (keyBytes.Length * 8 < 256)
-    {
-        throw new InvalidOperationException("JWT secret key must be at least 256 bits (32 characters) long");
-    }
+    // Use plain text key instead of Base64
+    var keyBytes = Encoding.UTF8.GetBytes(jwtKey);
+    Console.WriteLine($"JWT Key length in bits: {keyBytes.Length * 8}");
 
     builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         .AddJwtBearer(options =>
         {
+            options.SaveToken = true;
             options.TokenValidationParameters = new TokenValidationParameters
             {
-                ValidateIssuer = true,  // Validates the 'iss' claim
-                ValidateAudience = true,  // Validates the 'aud' claim
-                ValidateLifetime = true,  // Checks if token is expired
-                ValidateIssuerSigningKey = true,  // Validates the signature
-                ValidIssuer = builder.Configuration["JWT_ISSUER"],
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = builder.Configuration["JWT_ISSUER"]?.TrimEnd(),  // Trim any whitespace
                 ValidAudience = builder.Configuration["JWT_AUDIENCE"],
-                IssuerSigningKey = new SymmetricSecurityKey(keyBytes),
-                ClockSkew = TimeSpan.Zero  // Optional: removes the default 5 minute clock skew
+                IssuerSigningKey = new SymmetricSecurityKey(keyBytes)
             };
 
-            // Optional: Add events for debugging token validation
             options.Events = new JwtBearerEvents
             {
                 OnAuthenticationFailed = context =>
                 {
-                    Console.WriteLine($"Authentication failed: {context.Exception.Message}");
+                    Console.WriteLine($"Auth failed: {context.Exception.Message}");
+                    return Task.CompletedTask;
+                },
+                OnTokenValidated = context =>
+                {
+                    Console.WriteLine("Token validated successfully");
                     return Task.CompletedTask;
                 }
             };
@@ -114,9 +113,10 @@ try
     builder.Services.AddCors(options =>
     {
         options.AddPolicy("AllowAllOrigins", policy =>
-            policy.AllowAnyOrigin()
+            policy.WithOrigins("https://caserelay.vercel.app")
                   .AllowAnyMethod()
-                  .AllowAnyHeader());
+                  .AllowAnyHeader()
+                  .AllowCredentials());
     });
 
     // Swagger setup

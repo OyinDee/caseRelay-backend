@@ -196,7 +196,10 @@ namespace CaseRelayAPI.Services
 
         private string GenerateJwtToken(User user)
         {
-            var secretKey = _configuration["Jwt_SECRETKEY"] ?? "defaultSecretKey";
+            var secretKey = Environment.GetEnvironmentVariable("JWT_SECRETKEY");
+            var issuer = Environment.GetEnvironmentVariable("JWT_ISSUER")?.TrimEnd();
+            var audience = Environment.GetEnvironmentVariable("JWT_AUDIENCE");
+
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
@@ -204,14 +207,14 @@ namespace CaseRelayAPI.Services
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.PoliceId),
                 new Claim(ClaimTypes.Name, $"{user.FirstName} {user.LastName}"),
-                new Claim(ClaimTypes.Role, user.Role ?? "Unknown"), // Role claim
+                new Claim(ClaimTypes.Role, user.Role ?? "Unknown"),
                 new Claim("department", user.Department ?? "Unknown"),
                 new Claim("userId", user.UserID.ToString())
             };
 
             var token = new JwtSecurityToken(
-                issuer: _configuration["Jwt:Issuer"] ?? "defaultIssuer",
-                audience: _configuration["Jwt:Audience"] ?? "defaultAudience",
+                issuer: issuer,
+                audience: audience,
                 claims: claims,
                 expires: DateTime.UtcNow.AddHours(2),
                 signingCredentials: credentials

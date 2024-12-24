@@ -12,7 +12,7 @@ publish/
 .env
 *.env
 
-
+caserelayapi.zip
 # Logs
 Logs/
 *.log
@@ -30,3 +30,4 @@ packages/
 Thumbs.db
 
 
+caserelayapi.zip
