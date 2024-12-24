@@ -246,6 +246,11 @@ try
             }
         });
 
+        endpoints.MapGet("/test", () =>
+        {
+            return Results.Ok(new { message = "Basic endpoint working" });
+        });
+
         endpoints.MapControllers();
     });
 
