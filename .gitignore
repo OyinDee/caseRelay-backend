@@ -11,10 +11,7 @@ publish/
 # Environment files
 .env
 *.env
-appsettings.json
-appsettings.Development.json
-appsettings.Production.json
-appsettings.*.json
+
 
 # Logs
 Logs/
@@ -32,6 +29,4 @@ packages/
 .DS_Store
 Thumbs.db
 
-# Sensitive Data
-Data/SeedData.cs
 
