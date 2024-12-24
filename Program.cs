@@ -205,7 +205,13 @@ try
     app.UseRouting();
     app.UseCors("AllowAllOrigins");
     
-    // Make sure these are in this exact order
+    // Allow basic endpoints without auth
+    app.MapGet("/test", () => Results.Ok(new { message = "Basic endpoint working" }))
+       .AllowAnonymous();
+    
+    app.MapGet("/health", () => Results.Ok(new { status = "healthy" }))
+       .AllowAnonymous();
+
     app.UseAuthentication();
     app.UseAuthorization();
 
