@@ -1,0 +1,98 @@
+[
+    {
+      "name": "APPLICATIONINSIGHTS_CONNECTION_STRING",
+      "value": "InstrumentationKey=d28a6944-f1c8-417f-bb7d-97974c9f6f7b;IngestionEndpoint=https://canadacentral-1.in.applicationinsights.azure.com/;LiveEndpoint=https://canadacentral.livediagnostics.monitor.azure.com/;ApplicationId=f6ca24d7-61e3-44ba-899f-a70023b97c13",
+      "slotSetting": false
+    },
+    {
+      "name": "ApplicationInsightsAgent_EXTENSION_VERSION",
+      "value": "~2",
+      "slotSetting": false
+    },
+    {
+      "name": "XDT_MicrosoftApplicationInsights_Mode",
+      "value": "default",
+      "slotSetting": false
+    },
+    {
+      "name": "JWT_SECRETKEY",
+      "value": "VE9QX1NFQ1JFVF9LRVlfRk9SX0pXVF9TSUdOSU5HX0FORF9WRVJJRklDQVRJT05fUFVSUE9TRVNfT05MWQ==",
+      "slotSetting": false
+    },
+    {
+      "name": "JWT_ISSUER",
+      "value": "caserelay-hmaah2bddygjcgbn.canadacentral-01.azurewebsites.net",
+      "slotSetting": false
+    },
+    {
+      "name": "JWT_AUDIENCE",
+      "value": "https://caserelay.vercel.app",
+      "slotSetting": false
+    },
+    {
+      "name": "EMAIL_SMTP_SERVER",
+      "value": "smtp.gmail.com",
+      "slotSetting": false
+    },
+    {
+      "name": "EMAIL_SMTP_PORT",
+      "value": "465",
+      "slotSetting": false
+    },
+    {
+      "name": "EMAIL_SENDER",
+      "value": "case.relay0@gmail.com",
+      "slotSetting": false
+    },
+    {
+      "name": "EMAIL_PASSWORD",
+      "value": "cjui mmwr xgeb xxgx",
+      "slotSetting": false
+    },
+    {
+      "name": "EMAIL_FROM_NAME",
+      "value": "CaseRelay",
+      "slotSetting": false
+    },
+    {
+      "name": "DB_SERVER",
+      "value": "mssql-189487-0.cloudclusters.net",
+      "slotSetting": false
+    },
+    {
+      "name": "DB_PORT",
+      "value": "10062",
+      "slotSetting": false
+    },
+    {
+      "name": "DB_NAME",
+      "value": "caserelay",
+      "slotSetting": false
+    },
+    {
+      "name": "DB_USER",
+      "value": "diidee",
+      "slotSetting": false
+    },
+    {
+      "name": "DB_PASSWORD",
+      "value": "Fffffff8",
+      "slotSetting": false
+    },
+    {
+      "name": "CLOUDINARY_CLOUD_NAME",
+      "value": "dol47ucmj",
+      "slotSetting": false
+    },
+    {
+      "name": "CLOUDINARY_API_KEY",
+      "value": "258681887344853",
+      "slotSetting": false
+    },
+    {
+      "name": "CLOUDINARY_API_SECRET",
+      "value": "kbcSM8qZrZ3_fIelVP-V-44mSYo",
+      "slotSetting": false
+    }
+  ]
+  
