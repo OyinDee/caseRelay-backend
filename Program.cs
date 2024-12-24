@@ -203,34 +203,20 @@ try
 
     // Fix middleware order
     app.UseRouting();
-
-    // Add this after app.UseRouting()
-    app.Use(async (context, next) =>
-    {
-        try
-        {
-            await next();
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Unhandled error: {ex.Message}");
-            Console.WriteLine($"Stack trace: {ex.StackTrace}");
-            
-            context.Response.StatusCode = 500;
-            context.Response.ContentType = "application/json";
-            await context.Response.WriteAsJsonAsync(new { 
-                error = "An error occurred", 
-                detail = ex.Message 
-            });
-        }
-    });
-
-    app.UseCors("AllowAllOrigins"); // Move CORS here
+    app.UseCors("AllowAllOrigins");
+    
+    // Make sure these are in this exact order
     app.UseAuthentication();
     app.UseAuthorization();
-    
+
     app.UseEndpoints(endpoints =>
     {
+        // Add this to test without auth
+        endpoints.MapGet("/test", () =>
+        {
+            return Results.Ok(new { message = "Basic endpoint working" });
+        }).AllowAnonymous();  // Allow anonymous access to test endpoint
+
         endpoints.MapGet("/", () =>
         {
             try  // Add error handling
@@ -266,11 +252,6 @@ try
                 Console.WriteLine($"Health check error: {ex.Message}");
                 return Results.StatusCode(500);
             }
-        });
-
-        endpoints.MapGet("/test", () =>
-        {
-            return Results.Ok(new { message = "Basic endpoint working" });
         });
 
         endpoints.MapControllers();
