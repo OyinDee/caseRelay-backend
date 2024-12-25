@@ -53,4 +53,4 @@ jobs:
           app-name: 'caserelay'
           slot-name: 'Production'
           package: .
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_CA0DA4E126E944449AE2C11E2798CFD9 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_13E859D116D247A2A5C78BCC283D855D }}
