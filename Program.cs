@@ -20,9 +20,11 @@ try
     Console.WriteLine("Application starting...");
     var builder = WebApplication.CreateBuilder(args);
     
-    // Add startup error logging
-    builder.WebHost.CaptureStartupErrors(true)
-           .UseSetting("detailedErrors", "true");
+    // Let IIS handle the port binding
+    builder.WebHost.UseIIS()
+           .UseIISIntegration();
+    
+    // Remove any explicit port configuration
 
     // Add Application Insights
     builder.Services.AddApplicationInsightsTelemetry();
@@ -128,17 +130,16 @@ try
                 };
             });
 
-        // Update CORS Policy
-        builder.Services.AddCors(options =>
-        {
-            options.AddPolicy("AllowAllOrigins", builder =>
-                builder.WithOrigins("https://caserelay.vercel.app")
-                       .AllowAnyMethod()
-                       .AllowAnyHeader()
-                       .AllowCredentials()
-                       .SetIsOriginAllowed(_ => true)
-                       .WithExposedHeaders("Content-Disposition"));
-        });
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+        policy.WithOrigins("https://caserelay.vercel.app")
+              .AllowAnyMethod()
+              .AllowAnyHeader()
+              .AllowCredentials()
+              .WithExposedHeaders("Content-Disposition")
+              .SetPreflightMaxAge(TimeSpan.FromMinutes(10)));
+});
 
         // Swagger setup
         builder.Services.AddEndpointsApiExplorer();
@@ -165,6 +166,9 @@ try
     }
 
     var app = builder.Build();
+
+    // Add startup logging
+    app.Logger.LogInformation("Application built successfully");
 
     try
     {
@@ -231,7 +235,7 @@ try
 
         // Fix middleware order - CORS must be before Authorization
         app.UseRouting();
-        app.UseCors("AllowAllOrigins"); // Must come before auth
+        app.UseCors(); // Must come before Authentication
         app.UseAuthentication();
         app.UseAuthorization();
 
@@ -288,8 +292,8 @@ try
 
         app.MapControllers();
 
-        // Run the app
-        app.Run();
+        // Run the app without specifying port (let IIS handle it)
+        await app.RunAsync();
     }
     catch (Exception ex)
     {
