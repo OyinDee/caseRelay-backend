@@ -78,20 +78,17 @@ try
             throw new InvalidOperationException("SQL connection string not found");
         }
 
-        // Replace password placeholder if provided in environment
+        // Replace password from environment variable
         var dbPassword = Environment.GetEnvironmentVariable("DB_PASSWORD");
         if (!string.IsNullOrEmpty(dbPassword))
         {
             connectionString = connectionString.Replace("{your_password}", dbPassword);
         }
 
-        builder.Services.AddDbContext<ApplicationDbContext>(options => {
-            options.UseSqlServer(connectionString);
-            if (environment == "Development") {
-                options.EnableSensitiveDataLogging();
-                options.EnableDetailedErrors();
-            }
-        });
+        Console.WriteLine("Attempting database connection...");
+        builder.Services.AddDbContext<ApplicationDbContext>(options => 
+            options.UseSqlServer(connectionString)
+        );
 
         // JWT Authentication
         var jwtKey = Environment.GetEnvironmentVariable("JWT_SECRETKEY");
