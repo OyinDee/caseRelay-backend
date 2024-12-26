@@ -20,9 +20,11 @@ try
     Console.WriteLine("Application starting...");
     var builder = WebApplication.CreateBuilder(args);
     
-    // Replace IIS configuration with Kestrel
+    // Configure Kestrel for Azure App Service
     builder.WebHost.UseKestrel(options => {
-        options.Listen(System.Net.IPAddress.Any, 5000);
+        // Let Azure handle the port
+        var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+        options.Listen(System.Net.IPAddress.Any, int.Parse(port));
     })
     .UseContentRoot(Directory.GetCurrentDirectory());
 
