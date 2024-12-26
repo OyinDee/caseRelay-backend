@@ -102,6 +102,7 @@ namespace CaseRelayAPI.Controllers
             {
                 token = result.Token,
                 userId = user.UserID,
+                policeId = user.PoliceId,
                 name = $"{user.FirstName} {user.LastName}",
                 role = user.Role,
                 department = user.Department,
@@ -204,6 +205,34 @@ namespace CaseRelayAPI.Controllers
             return result.IsSuccess
                 ? Ok(new { message = "Account deleted successfully" })
                 : BadRequest(new { message = result.ErrorMessage });
+        }
+
+        /// <summary>
+        /// Retrieves the authenticated user's information.
+        /// </summary>
+        /// <returns>The user's information.</returns>
+        [Authorize]
+        [HttpGet("userinfo")]
+        public async Task<IActionResult> GetUserInfo()
+        {
+            var policeId = User.FindFirst(c => c.Type == "sub")?.Value;
+
+            if (string.IsNullOrEmpty(policeId)) return Unauthorized(new { message = "User identity could not be verified." });
+
+            var user = await _authService.GetUserByPoliceIdAsync(policeId);
+
+            if (user == null) return NotFound(new { message = "User not found." });
+
+            return Ok(new
+            {
+                userId = user.UserID,
+                policeId = user.PoliceId,
+                name = $"{user.FirstName} {user.LastName}",
+                role = user.Role,
+                department = user.Department,
+                badgeNumber = user.BadgeNumber,
+                rank = user.Rank
+            });
         }
     }
 }
