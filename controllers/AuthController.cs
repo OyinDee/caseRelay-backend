@@ -234,6 +234,31 @@ namespace CaseRelayAPI.Controllers
                 rank = user.Rank
             });
         }
+
+        /// <summary>
+        /// Retrieves information of a user by their police ID.
+        /// </summary>
+        /// <param name="policeId">The police ID of the user.</param>
+        /// <returns>The user's information.</returns>
+        [Authorize]
+        [HttpGet("userinfo/{policeId}")]
+        public async Task<IActionResult> GetUserInfoByPoliceId(string policeId)
+        {
+            var user = await _authService.GetUserByPoliceIdAsync(policeId);
+
+            if (user == null) return NotFound(new { message = "User not found." });
+
+            return Ok(new
+            {
+                userId = user.UserID,
+                policeId = user.PoliceId,
+                name = $"{user.FirstName} {user.LastName}",
+                role = user.Role,
+                department = user.Department,
+                badgeNumber = user.BadgeNumber,
+                rank = user.Rank
+            });
+        }
     }
 }
 
