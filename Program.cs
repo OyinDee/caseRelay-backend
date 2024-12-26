@@ -20,10 +20,12 @@ try
     Console.WriteLine("Application starting...");
     var builder = WebApplication.CreateBuilder(args);
     
-    // Let IIS handle the port binding
-    builder.WebHost.UseIIS()
-           .UseIISIntegration();
-    
+    // Replace IIS configuration with Kestrel
+    builder.WebHost.UseKestrel(options => {
+        options.Listen(System.Net.IPAddress.Any, 5000);
+    })
+    .UseContentRoot(Directory.GetCurrentDirectory());
+
     // Remove any explicit port configuration
 
     // Add Application Insights
