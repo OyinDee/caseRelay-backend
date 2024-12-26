@@ -268,3 +268,16 @@ namespace CaseRelayAPI.Controllers
         }
     }
 } 
+public class RegisterRequest
+{
+    public string PoliceId { get; set; } = string.Empty;
+    public string FirstName { get; set; } = string.Empty;
+    public string LastName { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
+    public string Phone { get; set; } = string.Empty;
+    public string Passcode { get; set; } = string.Empty;
+    public string? Role { get; set; }
+    public string? Department { get; set; }
+    public string? BadgeNumber { get; set; }
+    public string? Rank { get; set; }
+} 
