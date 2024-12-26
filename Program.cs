@@ -215,124 +215,113 @@ builder.Services.AddCors(options =>
 
             Console.WriteLine("Database setup completed successfully.");
         }
+
+        // Add .NET 8 specific middleware
+        app.UseAntiforgery();  // New in .NET 8
+
+        // Middleware pipeline configuration
+        if (app.Environment.IsDevelopment() || environment == "Development")
+        {
+            Console.WriteLine("Running in Development mode - enabling developer features");
+            app.UseDeveloperExceptionPage();
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "CaseRelayAPI v1");
+                c.RoutePrefix = string.Empty; // Makes Swagger UI accessible at the root
+            });
+        }
+        else
+        {
+            Console.WriteLine("Running in Production mode - using production error handling");
+            app.UseExceptionHandler(configure: options => 
+            {
+                options.Run(async context =>
+                {
+                    context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+                    context.Response.ContentType = "application/json";
+                    await context.Response.WriteAsJsonAsync(new { error = "An error occurred." });
+                });
+            });
+            app.UseHsts(); // Enforce strict transport security
+        }
+
+        app.UseMiddleware<ExceptionHandlingMiddleware>(); // Custom middleware for exception handling
+        app.UseHttpsRedirection(); // Redirect HTTP to HTTPS
+        app.UseDefaultFiles();  // Add this line before UseStaticFiles
+        app.UseStaticFiles(new StaticFileOptions
+        {
+            ServeUnknownFileTypes = true,
+            DefaultContentType = "application/octet-stream"
+        }); // Serve static files
+
+        // Fix middleware order - CORS must be before Authorization
+        app.UseRouting();
+        app.UseCors(); // Must come before Authentication
+        app.UseAuthentication();
+        app.UseAuthorization();
+
+        // Keep only these endpoint definitions
+        app.MapGet("/test", () =>
+        {
+            try
+            {
+                return Results.Ok(new { message = "Basic endpoint working" });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Test endpoint error: {ex.Message}");
+                return Results.StatusCode(500);
+            }
+        }).AllowAnonymous();
+
+        app.MapGet("/", () =>
+        {
+            try
+            {
+                return Results.Ok(new
+                {
+                    Api = "CaseRelay API",
+                    Version = "1.0",
+                    Status = "Running"
+                });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Root endpoint error: {ex.Message}");
+                return Results.StatusCode(500);
+            }
+        });
+
+        app.MapGet("/health", () =>
+        {
+            try
+            {
+                return Results.Ok(new
+                {
+                    Status = "Healthy",
+                    Environment = app.Environment.EnvironmentName,
+                    Time = DateTime.UtcNow,
+                    Assembly = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version?.ToString()
+                });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Health check error: {ex.Message}");
+                return Results.StatusCode(500);
+            }
+        }).AllowAnonymous();
+
+        app.MapControllers();
+
+        // Run the app without specifying port (let IIS handle it)
+        await app.RunAsync();
     }
     catch (Exception ex)
     {
-        Console.WriteLine($"Critical database error: {ex.Message}");
-        Console.WriteLine($"Stack trace: {ex.StackTrace}");
-        // In production, you might want to log this but still allow the app to start
-        if (environment == "Development")
-        {
-            throw; // Only throw in development
-        }
+        Console.WriteLine($"Error during runtime: {ex.Message}");
+        throw;
     }
-
-    // Add .NET 8 specific middleware
-    app.UseAntiforgery();  // New in .NET 8
-
-    // Middleware pipeline configuration
-    if (app.Environment.IsDevelopment() || environment == "Development")
-    {
-        Console.WriteLine("Running in Development mode - enabling developer features");
-        app.UseDeveloperExceptionPage();
-        app.UseSwagger();
-        app.UseSwaggerUI(c =>
-        {
-            c.SwaggerEndpoint("/swagger/v1/swagger.json", "CaseRelayAPI v1");
-            c.RoutePrefix = string.Empty; // Makes Swagger UI accessible at the root
-        });
-    }
-    else
-    {
-        Console.WriteLine("Running in Production mode - using production error handling");
-        app.UseExceptionHandler(configure: options => 
-        {
-            options.Run(async context =>
-            {
-                context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-                context.Response.ContentType = "application/json";
-                await context.Response.WriteAsJsonAsync(new { error = "An error occurred." });
-            });
-        });
-        app.UseHsts(); // Enforce strict transport security
-    }
-
-    app.UseMiddleware<ExceptionHandlingMiddleware>(); // Custom middleware for exception handling
-    app.UseHttpsRedirection(); // Redirect HTTP to HTTPS
-    app.UseDefaultFiles();  // Add this line before UseStaticFiles
-    app.UseStaticFiles(new StaticFileOptions
-    {
-        ServeUnknownFileTypes = true,
-        DefaultContentType = "application/octet-stream"
-    }); // Serve static files
-
-    // Fix middleware order - CORS must be before Authorization
-    app.UseRouting();
-    app.UseCors(); // Must come before Authentication
-    app.UseAuthentication();
-    app.UseAuthorization();
-
-    // Keep only these endpoint definitions
-    app.MapGet("/test", () =>
-    {
-        try
-        {
-            return Results.Ok(new { message = "Basic endpoint working" });
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Test endpoint error: {ex.Message}");
-            return Results.StatusCode(500);
-        }
-    }).AllowAnonymous();
-
-    app.MapGet("/", () =>
-    {
-        try
-        {
-            return Results.Ok(new
-            {
-                Api = "CaseRelay API",
-                Version = "1.0",
-                Status = "Running"
-            });
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Root endpoint error: {ex.Message}");
-            return Results.StatusCode(500);
-        }
-    });
-
-    app.MapGet("/health", () =>
-    {
-        try
-        {
-            return Results.Ok(new
-            {
-                Status = "Healthy",
-                Environment = app.Environment.EnvironmentName,
-                Time = DateTime.UtcNow,
-                Assembly = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version?.ToString()
-            });
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Health check error: {ex.Message}");
-            return Results.StatusCode(500);
-        }
-    }).AllowAnonymous();
-
-    app.MapControllers();
-
-    // Run the app without specifying port (let IIS handle it)
-    await app.RunAsync();
-}
-catch (Exception ex)
-{
-    Console.WriteLine($"Error during runtime: {ex.Message}");
-    throw;
-}
 }
 catch (Exception ex)
 {
