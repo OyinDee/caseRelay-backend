@@ -69,6 +69,17 @@ namespace CaseRelayAPI.Controllers
 
             _logger.LogInformation("Attempting to authenticate user with PoliceId: {PoliceId}", request.PoliceId);
 
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var authResult = await _authService.AuthenticateAsync(request.PoliceId, request.Passcode);
+            if (authResult == null || authResult.Errors != null)
+            {
+                return Unauthorized(new { message = authResult?.Errors ?? "Authentication failed." });
+            }
+
             var result = await _authService.AuthenticateAsync(request.PoliceId, request.Passcode);
 
             if (result == null)
