@@ -149,10 +149,12 @@ namespace CaseRelayAPI.Services
 
         public async Task<Case> GetCaseDetailsWithExtrasAsync(int caseId)
         {
-            return await _context.Cases
+            var caseDetails = await _context.Cases
                 .Include(c => c.Comments)
                 .Include(c => c.Documents)
                 .FirstOrDefaultAsync(c => c.CaseId == caseId);
+
+            return caseDetails ?? new Case(); // Ensure a non-null return value
         }
 
         public async Task<bool> AddDocumentAsync(CaseDocument newDocument)

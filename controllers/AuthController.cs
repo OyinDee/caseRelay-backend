@@ -69,6 +69,17 @@ namespace CaseRelayAPI.Controllers
 
             _logger.LogInformation("Attempting to authenticate user with PoliceId: {PoliceId}", request.PoliceId);
 
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var authResult = await _authService.AuthenticateAsync(request.PoliceId, request.Passcode);
+            if (authResult == null || authResult.Errors != null)
+            {
+                return Unauthorized(new { message = authResult?.Errors ?? "Authentication failed." });
+            }
+
             var result = await _authService.AuthenticateAsync(request.PoliceId, request.Passcode);
 
             if (result == null)
@@ -91,6 +102,7 @@ namespace CaseRelayAPI.Controllers
             {
                 token = result.Token,
                 userId = user.UserID,
+                policeId = user.PoliceId,
                 name = $"{user.FirstName} {user.LastName}",
                 role = user.Role,
                 department = user.Department,
@@ -193,6 +205,59 @@ namespace CaseRelayAPI.Controllers
             return result.IsSuccess
                 ? Ok(new { message = "Account deleted successfully" })
                 : BadRequest(new { message = result.ErrorMessage });
+        }
+
+        /// <summary>
+        /// Retrieves the authenticated user's information.
+        /// </summary>
+        /// <returns>The user's information.</returns>
+        [Authorize]
+        [HttpGet("userinfo")]
+        public async Task<IActionResult> GetUserInfo()
+        {
+            var policeId = User.FindFirst(c => c.Type == "sub")?.Value;
+
+            if (string.IsNullOrEmpty(policeId)) return Unauthorized(new { message = "User identity could not be verified." });
+
+            var user = await _authService.GetUserByPoliceIdAsync(policeId);
+
+            if (user == null) return NotFound(new { message = "User not found." });
+
+            return Ok(new
+            {
+                userId = user.UserID,
+                policeId = user.PoliceId,
+                name = $"{user.FirstName} {user.LastName}",
+                role = user.Role,
+                department = user.Department,
+                badgeNumber = user.BadgeNumber,
+                rank = user.Rank
+            });
+        }
+
+        /// <summary>
+        /// Retrieves information of a user by their police ID.
+        /// </summary>
+        /// <param name="policeId">The police ID of the user.</param>
+        /// <returns>The user's information.</returns>
+        [Authorize]
+        [HttpGet("userinfo/{policeId}")]
+        public async Task<IActionResult> GetUserInfoByPoliceId(string policeId)
+        {
+            var user = await _authService.GetUserByPoliceIdAsync(policeId);
+
+            if (user == null) return NotFound(new { message = "User not found." });
+
+            return Ok(new
+            {
+                userId = user.UserID,
+                policeId = user.PoliceId,
+                name = $"{user.FirstName} {user.LastName}",
+                role = user.Role,
+                department = user.Department,
+                badgeNumber = user.BadgeNumber,
+                rank = user.Rank
+            });
         }
     }
 }

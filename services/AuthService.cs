@@ -315,6 +315,11 @@ namespace CaseRelayAPI.Services
             return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
         }
 
+        public async Task<User> GetUserByPoliceIdAsync(string policeId)
+        {
+            return await _context.Users.FirstOrDefaultAsync(u => u.PoliceId == policeId);
+        }
+
         public async Task<Result> UpdateUserProfileAsync(string policeId, UserUpdateDto updateDto)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.PoliceId == policeId);
