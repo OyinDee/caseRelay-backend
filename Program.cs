@@ -72,21 +72,21 @@ try
         builder.Services.AddSingleton<EmailService>();
 
         // Database Context
-        var dbServer = builder.Configuration["DB_SERVER"] ?? Environment.GetEnvironmentVariable("DB_SERVER");
-        var dbPort = builder.Configuration["DB_PORT"] ?? Environment.GetEnvironmentVariable("DB_PORT");
-        var dbName = builder.Configuration["DB_NAME"] ?? Environment.GetEnvironmentVariable("DB_NAME");
-        var dbUser = builder.Configuration["DB_USER"] ?? Environment.GetEnvironmentVariable("DB_USER");
-        var dbPassword = builder.Configuration["DB_PASSWORD"] ?? Environment.GetEnvironmentVariable("DB_PASSWORD");
+        var connectionString = builder.Configuration.GetConnectionString("AZURE_SQL_CONNECTIONSTRING") 
+            ?? Environment.GetEnvironmentVariable("AZURE_SQL_CONNECTIONSTRING");
 
-        // Log connection details (remove in production)
-        Console.WriteLine($"Attempting to connect to: {dbServer}:{dbPort}");
-        
-        var connectionString = $"Server={dbServer},{dbPort};Database={dbName};User Id={dbUser};Password={dbPassword};Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;";
-        
+        if (string.IsNullOrEmpty(connectionString))
+        {
+            throw new InvalidOperationException("Azure SQL connection string not found");
+        }
+
         builder.Services.AddDbContext<ApplicationDbContext>(options => {
             options.UseSqlServer(connectionString);
-            options.EnableSensitiveDataLogging(); // Remove in production
-            options.EnableDetailedErrors(); // Remove in production
+            // Remove sensitive data logging in production
+            if (environment == "Development") {
+                options.EnableSensitiveDataLogging();
+                options.EnableDetailedErrors();
+            }
         });
 
         // JWT Authentication
