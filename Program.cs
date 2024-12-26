@@ -72,17 +72,21 @@ try
         builder.Services.AddSingleton<EmailService>();
 
         // Database Context
-        var connectionString = builder.Configuration.GetConnectionString("AZURE_SQL_CONNECTIONSTRING") 
-            ?? Environment.GetEnvironmentVariable("AZURE_SQL_CONNECTIONSTRING");
-
+        var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
         if (string.IsNullOrEmpty(connectionString))
         {
-            throw new InvalidOperationException("Azure SQL connection string not found");
+            throw new InvalidOperationException("SQL connection string not found");
+        }
+
+        // Replace password placeholder if provided in environment
+        var dbPassword = Environment.GetEnvironmentVariable("DB_PASSWORD");
+        if (!string.IsNullOrEmpty(dbPassword))
+        {
+            connectionString = connectionString.Replace("{your_password}", dbPassword);
         }
 
         builder.Services.AddDbContext<ApplicationDbContext>(options => {
             options.UseSqlServer(connectionString);
-            // Remove sensitive data logging in production
             if (environment == "Development") {
                 options.EnableSensitiveDataLogging();
                 options.EnableDetailedErrors();
