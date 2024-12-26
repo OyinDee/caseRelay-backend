@@ -30,29 +30,30 @@ namespace CaseRelayAPI.Controllers
         /// <param name="request">The user registration details.</param>
         /// <returns>A message indicating the result of the registration.</returns>
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] UserRegistrationDto request)
+        public async Task<IActionResult> Register([FromBody] RegisterRequest request)
         {
-            if (request == null || string.IsNullOrEmpty(request.Passcode) || string.IsNullOrEmpty(request.PoliceId))
-                return BadRequest(new { message = "Invalid registration details." });
+            // Get requesting user's ID from token if it exists
+            string? requestingUserId = User.FindFirst("userId")?.Value;
 
             var user = new User
             {
                 PoliceId = request.PoliceId,
                 FirstName = request.FirstName,
                 LastName = request.LastName,
-                BadgeNumber = request.BadgeNumber,
-                Rank = request.Rank,
-                Department = request.Department,
                 Email = request.Email,
                 Phone = request.Phone,
-                Role = string.IsNullOrWhiteSpace(request.Role) ? "Officer" : request.Role
+                Role = request.Role, // This will be overridden for non-admin users
+                Department = request.Department,
+                BadgeNumber = request.BadgeNumber,
+                Rank = request.Rank
             };
 
-            var result = await _authService.RegisterUserAsync(user, request.Passcode);
+            var result = await _authService.RegisterUserAsync(user, request.Passcode, requestingUserId);
 
-            return result.IsSuccess
-                ? Ok(new { message = "Registration successful", userId = result.User.UserID })
-                : BadRequest(new { message = result.ErrorMessage });
+            if (!result.Success)
+                return BadRequest(new { message = result.Error });
+
+            return Ok(new { message = "Registration successful" });
         }
 
         /// <summary>
@@ -194,5 +195,19 @@ namespace CaseRelayAPI.Controllers
                 : BadRequest(new { message = result.ErrorMessage });
         }
     }
+}
+
+public class RegisterRequest
+{
+    public string PoliceId { get; set; } = string.Empty;
+    public string FirstName { get; set; } = string.Empty;
+    public string LastName { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
+    public string Phone { get; set; } = string.Empty;
+    public string Passcode { get; set; } = string.Empty;
+    public string? Role { get; set; }
+    public string? Department { get; set; }
+    public string? BadgeNumber { get; set; }
+    public string? Rank { get; set; }
 }
 

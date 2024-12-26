@@ -94,8 +94,31 @@ namespace CaseRelayAPI.Services
             }
         }
 
-        public async Task<AuthResult> RegisterUserAsync(User user, string passcode)
+        public async Task<AuthResult> RegisterUserAsync(User user, string passcode, string? requestingUserId = null)
         {
+            // Check if trying to register as admin
+            if (user.Role?.ToLower() == "admin")
+            {
+                // If no requesting user or not an admin, reject the request
+                if (requestingUserId == null)
+                {
+                    return AuthResult.Failure("Unauthorized: Cannot create admin account");
+                }
+
+                var requestingUser = await _context.Users
+                    .FirstOrDefaultAsync(u => u.UserID.ToString() == requestingUserId);
+
+                if (requestingUser?.Role?.ToLower() != "admin")
+                {
+                    return AuthResult.Failure("Unauthorized: Only admins can create admin accounts");
+                }
+            }
+            else
+            {
+                // Force default role for non-admin registrations
+                user.Role = "officer";
+            }
+
             if (!IsValidEmail(user.Email))
                 return AuthResult.Failure("Invalid email format.");
 
@@ -206,10 +229,23 @@ namespace CaseRelayAPI.Services
             var claims = new[]
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.PoliceId),
+                new Claim("userId", user.UserID.ToString()),
+                new Claim("policeId", user.PoliceId),
+                new Claim("email", user.Email),
                 new Claim(ClaimTypes.Name, $"{user.FirstName} {user.LastName}"),
+                new Claim("firstName", user.FirstName),
+                new Claim("lastName", user.LastName),
                 new Claim(ClaimTypes.Role, user.Role ?? "Unknown"),
                 new Claim("department", user.Department ?? "Unknown"),
-                new Claim("userId", user.UserID.ToString())
+                new Claim("rank", user.Rank ?? "Unknown"),
+                new Claim("badgeNumber", user.BadgeNumber ?? "Unknown"),
+                new Claim("division", user.Division ?? "Unknown"),
+                new Claim("precinct", user.Precinct ?? "Unknown"),
+                new Claim("station", user.Station ?? "Unknown"),
+                new Claim("specialUnit", user.SpecialUnit ?? "Unknown"),
+                new Claim("isVerified", user.IsVerified.ToString().ToLower()),
+                new Claim("clearance", user.Clearance ?? "Unknown"),
+                new Claim("profileImage", user.ProfileImageUrl ?? "")
             };
 
             var token = new JwtSecurityToken(
