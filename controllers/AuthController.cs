@@ -3,14 +3,10 @@ using Microsoft.AspNetCore.Authorization;
 using CaseRelayAPI.Services;
 using CaseRelayAPI.Models;
 using System.Threading.Tasks;
-using System.Text.RegularExpressions;
-using CaseRelayAPI.Dtos;
+using Microsoft.Extensions.Logging;
 
 namespace CaseRelayAPI.Controllers
 {
-    /// <summary>
-    /// Controller for managing authentication-related operations
-    /// </summary>
     [ApiController]
     [Route("api/[controller]")]
     public class AuthController : ControllerBase
@@ -25,16 +21,47 @@ namespace CaseRelayAPI.Controllers
         }
 
         /// <summary>
+        /// Authenticates a user and generates a JWT token.
+        /// </summary>
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] UserLoginDto request)
+        {
+            if (string.IsNullOrEmpty(request.PoliceId) || string.IsNullOrEmpty(request.Passcode))
+                return BadRequest(new { message = "Invalid login details." });
+
+            _logger.LogInformation("Authenticating user with PoliceId: {PoliceId}", request.PoliceId);
+
+            var authResult = await _authService.AuthenticateAsync(request.PoliceId, request.Passcode);
+
+            if (!authResult.IsSuccess)
+            {
+                _logger.LogError("Authentication failed for PoliceId: {PoliceId} with error: {ErrorMessage}", 
+                                 request.PoliceId, authResult.ErrorMessage);
+
+                return Unauthorized(new { message = authResult.ErrorMessage });
+            }
+
+            _logger.LogInformation("User authenticated successfully with PoliceId: {PoliceId}", request.PoliceId);
+
+            return Ok(new
+            {
+                token = authResult.Token,
+                userId = authResult.User.UserID,
+                policeId = authResult.User.PoliceId,
+                name = $"{authResult.User.FirstName} {authResult.User.LastName}",
+                role = authResult.User.Role,
+                department = authResult.User.Department,
+                badgeNumber = authResult.User.BadgeNumber,
+                rank = authResult.User.Rank
+            });
+        }
+
+        /// <summary>
         /// Registers a new user.
         /// </summary>
-        /// <param name="request">The user registration details.</param>
-        /// <returns>A message indicating the result of the registration.</returns>
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterRequest request)
         {
-            // Get requesting user's ID from token if it exists
-            string? requestingUserId = User.FindFirst("userId")?.Value;
-
             var user = new User
             {
                 PoliceId = request.PoliceId,
@@ -42,186 +69,93 @@ namespace CaseRelayAPI.Controllers
                 LastName = request.LastName,
                 Email = request.Email,
                 Phone = request.Phone,
-                Role = request.Role, // This will be overridden for non-admin users
+                Role = request.Role,
                 Department = request.Department,
                 BadgeNumber = request.BadgeNumber,
                 Rank = request.Rank
             };
 
-            var result = await _authService.RegisterUserAsync(user, request.Passcode, requestingUserId);
+            var result = await _authService.RegisterUserAsync(user, request.Passcode);
 
-            if (!result.Success)
-                return BadRequest(new { message = result.Error });
+            if (!result.IsSuccess)
+                return BadRequest(new { message = result.ErrorMessage });
 
             return Ok(new { message = "Registration successful" });
         }
 
         /// <summary>
-        /// Authenticates a user and generates a JWT token.
-        /// </summary>
-        /// <param name="request">The user login details.</param>
-        /// <returns>The JWT token and user details.</returns>
-        [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] UserLoginDto request)
-        {
-            if (request == null || string.IsNullOrEmpty(request.PoliceId) || string.IsNullOrEmpty(request.Passcode))
-                return BadRequest(new { message = "Invalid login details." });
-
-            _logger.LogInformation("Attempting to authenticate user with PoliceId: {PoliceId}", request.PoliceId);
-
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var authResult = await _authService.AuthenticateAsync(request.PoliceId, request.Passcode);
-            if (authResult == null || authResult.Errors != null)
-            {
-                return Unauthorized(new { message = authResult?.Errors ?? "Authentication failed." });
-            }
-
-            var result = await _authService.AuthenticateAsync(request.PoliceId, request.Passcode);
-
-            if (result == null)
-            {
-                _logger.LogError("Authentication failed for PoliceId: {PoliceId}", request.PoliceId);
-                return StatusCode(500, new { message = "An error occurred during login." });
-            }
-
-            if (!result.IsSuccess)
-            {
-                _logger.LogError("Authentication failed for PoliceId: {PoliceId} with error: {ErrorMessage}", request.PoliceId, result.ErrorMessage);
-                return Unauthorized(new { message = result.ErrorMessage });
-            }
-
-            _logger.LogInformation("User authenticated successfully with PoliceId: {PoliceId}", request.PoliceId);
-
-            var user = result.User;
-
-            return Ok(new
-            {
-                token = result.Token,
-                userId = user.UserID,
-                policeId = user.PoliceId,
-                name = $"{user.FirstName} {user.LastName}",
-                role = user.Role,
-                department = user.Department,
-                badgeNumber = user.BadgeNumber,
-                rank = user.Rank
-            });
-        }
-
-        /// <summary>
         /// Initiates the forgot password process.
         /// </summary>
-        /// <param name="request">The forgot password request details.</param>
-        /// <returns>A message indicating the result of the operation.</returns>
         [HttpPost("forgot-password")]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto request)
         {
-            if (request == null || string.IsNullOrEmpty(request.Email)) 
+            if (string.IsNullOrEmpty(request.Email))
                 return BadRequest(new { message = "Email is required." });
 
             var result = await _authService.InitiateForgotPasswordAsync(request.Email);
-            
-            return result.IsSuccess ? Ok(new { message = "Password reset instructions sent to your email." })
-                : BadRequest(new { message = result.ErrorMessage });
+
+            if (!result.IsSuccess)
+                return BadRequest(new { message = result.ErrorMessage });
+
+            return Ok(new { message = "Password reset instructions sent to your email." });
         }
 
         /// <summary>
-        /// Resets the user's password.
+        /// Resets a user's password.
         /// </summary>
-        /// <param name="request">The reset password request details.</param>
-        /// <returns>A message indicating the result of the operation.</returns>
         [HttpPost("reset-password")]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto request)
         {
-            if (request == null || string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.ResetToken) || string.IsNullOrEmpty(request.NewPasscode)) 
+            if (string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.ResetToken) || string.IsNullOrEmpty(request.NewPasscode))
                 return BadRequest(new { message = "Invalid reset details." });
 
             var result = await _authService.ResetPasswordAsync(request.Email, request.ResetToken, request.NewPasscode);
-            
-            return result.IsSuccess ? Ok(new { message = "Password reset successfully." }) 
-                : BadRequest(new { message = result.ErrorMessage });
+
+            if (!result.IsSuccess)
+                return BadRequest(new { message = result.ErrorMessage });
+
+            return Ok(new { message = "Password reset successfully." });
         }
 
         /// <summary>
-        /// Changes the user's passcode.
+        /// Changes a user's passcode.
         /// </summary>
-        /// <param name="request">The change passcode request details.</param>
-        /// <returns>A message indicating the result of the operation.</returns>
         [Authorize]
         [HttpPost("change-passcode")]
         public async Task<IActionResult> ChangePasscode([FromBody] ChangePasscodeDto request)
         {
             var policeId = User.FindFirst(c => c.Type == "sub")?.Value;
 
-            if (string.IsNullOrEmpty(policeId)) return Unauthorized(new { message = "User identity could not be verified." });
-            if (request == null || string.IsNullOrEmpty(request.CurrentPasscode) || string.IsNullOrEmpty(request.NewPasscode))
+            if (string.IsNullOrEmpty(policeId))
+                return Unauthorized(new { message = "User identity could not be verified." });
+
+            if (string.IsNullOrEmpty(request.CurrentPasscode) || string.IsNullOrEmpty(request.NewPasscode))
                 return BadRequest(new { message = "Invalid passcode details." });
+
             var result = await _authService.ChangePasscodeAsync(policeId, request.CurrentPasscode, request.NewPasscode);
 
-            return result.IsSuccess
-                ? Ok(new { message = "Passcode changed successfully" })
-                : BadRequest(new { message = result.ErrorMessage });
+            if (!result.IsSuccess)
+                return BadRequest(new { message = result.ErrorMessage });
+
+            return Ok(new { message = "Passcode changed successfully" });
         }
 
         /// <summary>
-        /// Updates the user's profile.
+        /// Retrieves the authenticated user's profile.
         /// </summary>
-        /// <param name="request">The user profile update details.</param>
-        /// <returns>A message indicating the result of the operation.</returns>
-        [Authorize]
-        [HttpPut("update-profile")]
-        public async Task<IActionResult> UpdateProfile([FromBody] UserUpdateDto request)
-        {
-            var policeId = User.FindFirst(c => c.Type == "sub")?.Value;
-
-            if (string.IsNullOrEmpty(policeId)) return Unauthorized(new { message = "User identity could not be verified." });
-            if (request == null)
-                return BadRequest(new { message = "Invalid update details." });
-
-            var result = await _authService.UpdateUserProfileAsync(policeId, request);
-
-            return result.IsSuccess
-                ? Ok(new { message = "Profile updated successfully" })
-                : BadRequest(new { message = result.ErrorMessage });
-        }
-
-        /// <summary>
-        /// Deletes the user's account.
-        /// </summary>
-        /// <returns>A message indicating the result of the operation.</returns>
-        [Authorize]
-        [HttpDelete("delete-account")]
-        public async Task<IActionResult> DeleteAccount()
-        {
-            var policeId = User.FindFirst(c => c.Type == "sub")?.Value;
-
-            if (string.IsNullOrEmpty(policeId)) return Unauthorized(new { message = "User identity could not be verified." });
-
-            var result = await _authService.DeleteUserAccountAsync(policeId);
-
-            return result.IsSuccess
-                ? Ok(new { message = "Account deleted successfully" })
-                : BadRequest(new { message = result.ErrorMessage });
-        }
-
-        /// <summary>
-        /// Retrieves the authenticated user's information.
-        /// </summary>
-        /// <returns>The user's information.</returns>
         [Authorize]
         [HttpGet("userinfo")]
         public async Task<IActionResult> GetUserInfo()
         {
             var policeId = User.FindFirst(c => c.Type == "sub")?.Value;
 
-            if (string.IsNullOrEmpty(policeId)) return Unauthorized(new { message = "User identity could not be verified." });
+            if (string.IsNullOrEmpty(policeId))
+                return Unauthorized(new { message = "User identity could not be verified." });
 
             var user = await _authService.GetUserByPoliceIdAsync(policeId);
 
-            if (user == null) return NotFound(new { message = "User not found." });
+            if (user == null)
+                return NotFound(new { message = "User not found." });
 
             return Ok(new
             {
@@ -236,43 +170,46 @@ namespace CaseRelayAPI.Controllers
         }
 
         /// <summary>
-        /// Retrieves information of a user by their police ID.
+        /// Updates the authenticated user's profile.
         /// </summary>
-        /// <param name="policeId">The police ID of the user.</param>
-        /// <returns>The user's information.</returns>
         [Authorize]
-        [HttpGet("userinfo/{policeId}")]
-        public async Task<IActionResult> GetUserInfoByPoliceId(string policeId)
+        [HttpPut("update-profile")]
+        public async Task<IActionResult> UpdateProfile([FromBody] UserUpdateDto request)
         {
-            var user = await _authService.GetUserByPoliceIdAsync(policeId);
+            var policeId = User.FindFirst(c => c.Type == "sub")?.Value;
 
-            if (user == null) return NotFound(new { message = "User not found." });
+            if (string.IsNullOrEmpty(policeId))
+                return Unauthorized(new { message = "User identity could not be verified." });
 
-            return Ok(new
-            {
-                userId = user.UserID,
-                policeId = user.PoliceId,
-                name = $"{user.FirstName} {user.LastName}",
-                role = user.Role,
-                department = user.Department,
-                badgeNumber = user.BadgeNumber,
-                rank = user.Rank
-            });
+            if (request == null)
+                return BadRequest(new { message = "Invalid update details." });
+
+            var result = await _authService.UpdateUserProfileAsync(policeId, request);
+
+            if (!result.IsSuccess)
+                return BadRequest(new { message = result.ErrorMessage });
+
+            return Ok(new { message = "Profile updated successfully." });
+        }
+
+        /// <summary>
+        /// Deletes the authenticated user's account.
+        /// </summary>
+        [Authorize]
+        [HttpDelete("delete-account")]
+        public async Task<IActionResult> DeleteAccount()
+        {
+            var policeId = User.FindFirst(c => c.Type == "sub")?.Value;
+
+            if (string.IsNullOrEmpty(policeId))
+                return Unauthorized(new { message = "User identity could not be verified." });
+
+            var result = await _authService.DeleteUserAccountAsync(policeId);
+
+            if (!result.IsSuccess)
+                return BadRequest(new { message = result.ErrorMessage });
+
+            return Ok(new { message = "Account deleted successfully." });
         }
     }
 }
-
-public class RegisterRequest
-{
-    public string PoliceId { get; set; } = string.Empty;
-    public string FirstName { get; set; } = string.Empty;
-    public string LastName { get; set; } = string.Empty;
-    public string Email { get; set; } = string.Empty;
-    public string Phone { get; set; } = string.Empty;
-    public string Passcode { get; set; } = string.Empty;
-    public string? Role { get; set; }
-    public string? Department { get; set; }
-    public string? BadgeNumber { get; set; }
-    public string? Rank { get; set; }
-}
-
