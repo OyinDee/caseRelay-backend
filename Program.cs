@@ -58,10 +58,10 @@ try
 
         // Cloudinary Service
         var cloudinaryConfig = builder.Configuration.GetSection("Cloudinary");
-        var cloudName = cloudinaryConfig["CloudName"] ?? throw new InvalidOperationException("Cloudinary CloudName is not configured");
-        var apiKey = cloudinaryConfig["ApiKey"] ?? throw new InvalidOperationException("Cloudinary ApiKey is not configured");
-        var apiSecret = cloudinaryConfig["ApiSecret"] ?? throw new InvalidOperationException("Cloudinary ApiSecret is not configured");
-
+        var cloudName = Environment.GetEnvironmentVariable("CLOUDINARY_CLOUD_NAME");
+        var apiKey = Environment.GetEnvironmentVariable("CLOUDINARY_API_KEY");
+        var apiSecret = Environment.GetEnvironmentVariable("CLOUDINARY_API_SECRET");
+        
         builder.Services.AddSingleton<ICloudinaryService>(sp => new CloudinaryService(
             cloudName,
             apiKey,
