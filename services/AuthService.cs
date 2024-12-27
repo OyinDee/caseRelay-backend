@@ -116,7 +116,7 @@ namespace CaseRelayAPI.Services
             else
             {
                 // Force default role for non-admin registrations
-                user.Role = "officer";
+                user.Role = "Officer";
             }
 
             if (!IsValidEmail(user.Email))
