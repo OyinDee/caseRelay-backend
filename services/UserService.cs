@@ -65,7 +65,10 @@ namespace CaseRelayAPI.Services
 
             return existingUser;
         }
-
+public async Task<List<User>> GetAllUsersAsync()
+{
+    return await _context.Users.ToListAsync();
+}
         public async Task<bool> DeleteUserAsync(int userId)
         {
             var userIdFromToken = GetUserIdFromToken();
