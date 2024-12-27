@@ -27,6 +27,22 @@ namespace CaseRelayAPI.Controllers
         }
 
         /// <summary>
+        /// Gets all users in the system.
+        /// </summary>
+        /// <returns>A list of all users.</returns>
+        [HttpGet("all")]
+        [Authorize(Roles = "Admin")] // Optional: Restricts access to admins
+        public async Task<IActionResult> GetAllUsers()
+        {
+            var users = await _userService.GetAllUsersAsync();
+
+            if (users == null || users.Count == 0)
+                return NotFound(new { message = "No users found." });
+
+            return Ok(users);
+        }
+
+        /// <summary>
         /// Gets the profile of the logged-in user.
         /// </summary>
         /// <returns>The profile of the logged-in user.</returns>
