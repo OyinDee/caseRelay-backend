@@ -327,3 +327,74 @@ catch (Exception ex)
     File.WriteAllText("startup_error.log", ex.ToString());
     throw;
 }
+
+void SeedDatabase(ApplicationDbContext context)
+{
+    var users = new[]
+    {
+        new User
+        {
+            PoliceId = "P12345",
+            FirstName = "John",
+            LastName = "Doe",
+            Email = "john.doe@example.com",
+            Phone = "123-456-7890",
+            PasscodeHash = BCrypt.Net.BCrypt.HashPassword("Password123!"),
+            Role = "Officer",
+            Department = "Homicide",
+            BadgeNumber = "B123",
+            Rank = "Sergeant",
+            IsActive = true,
+            IsVerified = true,
+            CreatedAt = DateTime.UtcNow
+        },
+        new User
+        {
+            PoliceId = "P67890",
+            FirstName = "Jane",
+            LastName = "Smith",
+            Email = "jane.smith@example.com",
+            Phone = "098-765-4321",
+            PasscodeHash = BCrypt.Net.BCrypt.HashPassword("Password123!"),
+            Role = "Officer",
+            Department = "Fraud",
+            BadgeNumber = "B456",
+            Rank = "Lieutenant",
+            IsActive = true,
+            IsVerified = true,
+            CreatedAt = DateTime.UtcNow
+        }
+    };
+
+    foreach (var user in users)
+    {
+        if (!context.Users.Any(u => u.PoliceId == user.PoliceId))
+        {
+            context.Users.Add(user);
+        }
+    }
+
+    var cases = new[]
+    {
+        new Case { Title = "Burglary", Description = "A burglary case", Status = "Open", AssignedOfficerId = "P12345", Severity = "High", CreatedBy = 1 },
+        new Case { Title = "Fraud", Description = "A fraud case", Status = "Closed", AssignedOfficerId = "P67890", Severity = "Medium", CreatedBy = 2, IsClosed = true, ResolvedAt = DateTime.UtcNow },
+        new Case { Title = "Assault", Description = "An assault case", Status = "Open", AssignedOfficerId = "P12345", Severity = "High", CreatedBy = 1 },
+        new Case { Title = "Theft", Description = "A theft case", Status = "Closed", AssignedOfficerId = "P67890", Severity = "Low", CreatedBy = 2, IsClosed = true, ResolvedAt = DateTime.UtcNow },
+        new Case { Title = "Vandalism", Description = "A vandalism case", Status = "Open", AssignedOfficerId = "P12345", Severity = "Medium", CreatedBy = 1 },
+        new Case { Title = "Cybercrime", Description = "A cybercrime case", Status = "Closed", AssignedOfficerId = "P67890", Severity = "High", CreatedBy = 2, IsClosed = true, ResolvedAt = DateTime.UtcNow },
+        new Case { Title = "Domestic Violence", Description = "A domestic violence case", Status = "Open", AssignedOfficerId = "P12345", Severity = "High", CreatedBy = 1 },
+        new Case { Title = "Drug Trafficking", Description = "A drug trafficking case", Status = "Closed", AssignedOfficerId = "P67890", Severity = "High", CreatedBy = 2, IsClosed = true, ResolvedAt = DateTime.UtcNow },
+        new Case { Title = "Kidnapping", Description = "A kidnapping case", Status = "Open", AssignedOfficerId = "P12345", Severity = "High", CreatedBy = 1 },
+        new Case { Title = "Arson", Description = "An arson case", Status = "Closed", AssignedOfficerId = "P67890", Severity = "High", CreatedBy = 2, IsClosed = true, ResolvedAt = DateTime.UtcNow }
+    };
+
+    foreach (var caseItem in cases)
+    {
+        if (!context.Cases.Any(c => c.Title == caseItem.Title && c.Description == caseItem.Description))
+        {
+            context.Cases.Add(caseItem);
+        }
+    }
+
+    context.SaveChanges();
+}
