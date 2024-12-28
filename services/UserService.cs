@@ -1,12 +1,14 @@
 using CaseRelayAPI.Models;
-using Microsoft.EntityFrameworkCore;
-using System.Threading.Tasks;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using CaseRelayAPI.Data;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System;
+using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace CaseRelayAPI.Services
 {
@@ -15,23 +17,22 @@ namespace CaseRelayAPI.Services
         private readonly ApplicationDbContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly INotificationService _notificationService;
-        private readonly IEmailService _emailService; 
 
-        public UserService(ApplicationDbContext context, 
-                          IHttpContextAccessor httpContextAccessor,
-                          INotificationService notificationService,
-                          IEmailService emailService) 
+        public UserService(
+            ApplicationDbContext context,
+            IHttpContextAccessor httpContextAccessor,
+            INotificationService notificationService
+        )
         {
             _context = context;
             _httpContextAccessor = httpContextAccessor;
             _notificationService = notificationService;
-            _emailService = emailService; 
         }
+
         private string GetUserIdFromToken()
         {
             var token = _httpContextAccessor.HttpContext?.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
-            if (string.IsNullOrEmpty(token))
-                return string.Empty;
+            if (string.IsNullOrEmpty(token)) return string.Empty;
 
             var handler = new JwtSecurityTokenHandler();
             var jwtToken = handler.ReadToken(token) as JwtSecurityToken;
@@ -55,42 +56,34 @@ namespace CaseRelayAPI.Services
             if (!isAdminOperation)
             {
                 var userId = GetUserIdFromToken();
-                if (string.IsNullOrEmpty(userId))
-                    return null;
+                if (string.IsNullOrEmpty(userId)) return null;
 
                 var existingUser = await _context.Users.FindAsync(user.UserID);
-                if (existingUser == null || existingUser.UserID.ToString() != userId)
-                    return null;
+                if (existingUser == null || existingUser.UserID.ToString() != userId) return null;
             }
-            else
+
+            var existingUserForUpdate = await _context.Users.FindAsync(user.UserID);
+            if (existingUserForUpdate == null) return null;
+
+            existingUserForUpdate.Role = user.Role ?? existingUserForUpdate.Role;
+            existingUserForUpdate.FirstName = user.FirstName ?? existingUserForUpdate.FirstName;
+            existingUserForUpdate.LastName = user.LastName ?? existingUserForUpdate.LastName;
+            existingUserForUpdate.Email = user.Email ?? existingUserForUpdate.Email;
+            existingUserForUpdate.Phone = user.Phone ?? existingUserForUpdate.Phone;
+            existingUserForUpdate.Rank = user.Rank ?? existingUserForUpdate.Rank;
+
+            _context.Users.Update(existingUserForUpdate);
+            await _context.SaveChangesAsync();
+
+            await _notificationService.CreateNotificationAsync(new Notification
             {
-                var existingUser = await _context.Users.FindAsync(user.UserID);
-                if (existingUser == null)
-                    return null;
+                UserId = existingUserForUpdate.UserID,
+                Title = "Profile Updated",
+                Message = "Your profile information has been updated",
+                Type = "admin"
+            });
 
-                existingUser.Role = user.Role ?? existingUser.Role;
-                existingUser.FirstName = user.FirstName ?? existingUser.FirstName;
-                existingUser.LastName = user.LastName ?? existingUser.LastName;
-                existingUser.Email = user.Email ?? existingUser.Email;
-                existingUser.Phone = user.Phone ?? existingUser.Phone;
-                existingUser.Rank = user.Rank ?? existingUser.Rank;
-
-                _context.Users.Update(existingUser);
-                await _context.SaveChangesAsync();
-
-                // Notify user about profile update
-                await _notificationService.CreateNotificationAsync(new Notification
-                {
-                    UserId = existingUser.UserID,
-                    Title = "Profile Updated",
-                    Message = "Your profile information has been updated",
-                    Type = "admin"
-                });
-
-                return existingUser;
-            }
-
-            return null;
+            return existingUserForUpdate;
         }
 
         public async Task<List<User>> GetAllUsersAsync()
@@ -106,7 +99,6 @@ namespace CaseRelayAPI.Services
                 var user = await _context.Users.FindAsync(userId);
                 if (user == null) return false;
 
-                // Notify user about account deletion
                 await _notificationService.CreateNotificationAsync(new Notification
                 {
                     UserId = userId,
@@ -115,7 +107,6 @@ namespace CaseRelayAPI.Services
                     Type = "admin"
                 });
 
-                // First, handle related cases
                 var cases = await _context.Cases
                     .Where(c => c.AssignedOfficerId == user.PoliceId)
                     .ToListAsync();
@@ -126,17 +117,15 @@ namespace CaseRelayAPI.Services
                     caseItem.PreviousOfficerId = user.PoliceId;
                 }
 
-                // Update the cases
                 _context.Cases.UpdateRange(cases);
-
-                // Now delete the user
                 _context.Users.Remove(user);
                 await _context.SaveChangesAsync();
+
                 await transaction.CommitAsync();
 
                 return true;
             }
-            catch (Exception)
+            catch
             {
                 await transaction.RollbackAsync();
                 return false;
@@ -157,19 +146,11 @@ namespace CaseRelayAPI.Services
             newUser.CreatedAt = DateTime.UtcNow;
             newUser.IsActive = true;
             newUser.RequirePasswordReset = true;
-            
+
             await _context.Users.AddAsync(newUser);
             await _context.SaveChangesAsync();
-
-            // Send credentials email
-            await _emailService.SendNewUserCredentialsAsync(
-                newUser.Email,
-                newUser.FirstName,
-                newUser.PoliceId,
-                temporaryPassword
-            );
 
             return newUser;
         }
     }
-}
+} 
