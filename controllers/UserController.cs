@@ -131,13 +131,13 @@ namespace CaseRelayAPI.Controllers
         /// Changes the role of a user.
         /// </summary>
         /// <param name="userId">The ID of the user.</param>
-        /// <param name="newRole">The new role for the user.</param>
+        /// <param name="roleUpdate">The new role for the user.</param>
         /// <returns>The updated user profile.</returns>
         [HttpPut("change-role/{userId}")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> ChangeUserRole(int userId, [FromBody] string newRole)
+        public async Task<IActionResult> ChangeUserRole(int userId, [FromBody] RoleUpdateDto roleUpdate)
         {
-            if (string.IsNullOrEmpty(newRole))
+            if (string.IsNullOrEmpty(roleUpdate.NewRole))  // Changed from roleUpdate.Role to roleUpdate.NewRole
                 return BadRequest(new { message = "Invalid role." });
 
             var user = await _userService.GetUserByIdAsync(userId);
@@ -145,8 +145,8 @@ namespace CaseRelayAPI.Controllers
             if (user == null)
                 return NotFound(new { message = "User not found." });
 
-            user.Role = newRole;
-            var updatedUser = await _userService.UpdateUserAsync(user);
+            user.Role = roleUpdate.NewRole;  // Changed from roleUpdate.Role to roleUpdate.NewRole
+            var updatedUser = await _userService.UpdateUserAsync(user, isAdminOperation: true);
 
             return Ok(updatedUser);
         }
@@ -206,5 +206,10 @@ namespace CaseRelayAPI.Controllers
 
             return Ok(createdUser);
         }
+    }
+
+    public class RoleUpdateDto
+    {
+        public string NewRole { get; set; } = string.Empty;  // Match the frontend property name
     }
 }
