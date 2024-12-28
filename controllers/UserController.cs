@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
+using CaseRelayAPI.Dtos;  
 
 namespace CaseRelayAPI.Controllers
 {
