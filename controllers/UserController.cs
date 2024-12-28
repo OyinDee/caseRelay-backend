@@ -5,7 +5,8 @@ using Microsoft.AspNetCore.Authorization;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
-using CaseRelayAPI.Dtos;  
+using CaseRelayAPI.Dtos;
+using System;
 
 namespace CaseRelayAPI.Controllers
 {
@@ -138,7 +139,7 @@ namespace CaseRelayAPI.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> ChangeUserRole(int userId, [FromBody] RoleUpdateDto roleUpdate)
         {
-            if (string.IsNullOrEmpty(roleUpdate.NewRole))  // Changed from roleUpdate.Role to roleUpdate.NewRole
+            if (string.IsNullOrEmpty(roleUpdate.NewRole)) 
                 return BadRequest(new { message = "Invalid role." });
 
             var user = await _userService.GetUserByIdAsync(userId);
@@ -146,7 +147,7 @@ namespace CaseRelayAPI.Controllers
             if (user == null)
                 return NotFound(new { message = "User not found." });
 
-            user.Role = roleUpdate.NewRole;  // Changed from roleUpdate.Role to roleUpdate.NewRole
+            user.Role = roleUpdate.NewRole;  
             var updatedUser = await _userService.UpdateUserAsync(user, isAdminOperation: true);
 
             return Ok(updatedUser);
@@ -181,7 +182,7 @@ namespace CaseRelayAPI.Controllers
         /// <param name="userId">The ID of the user.</param>
         /// <returns>A message indicating the result of the operation.</returns>
         [HttpDelete("delete/{userId}")]
-        [Authorize(Roles = "Admin")] // Only admins can delete users
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteUser(int userId)
         {
             var result = await _userService.DeleteUserAsync(userId);
@@ -200,7 +201,7 @@ namespace CaseRelayAPI.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateUser([FromBody] CreateUserDto newUserDto)
         {
-            string temporaryPassword = PasswordGenerator.GenerateTemporaryPassword();
+            string temporaryPassword = GenerateTemporaryPassword();
             
             var user = new User
             {
@@ -213,7 +214,7 @@ namespace CaseRelayAPI.Controllers
                 Department = newUserDto.Department,
                 BadgeNumber = newUserDto.BadgeNumber,
                 Rank = newUserDto.Rank,
-                RequirePasswordReset = false  // Changed to false - password reset is now optional
+                RequirePasswordReset = false
             };
 
             var createdUser = await _userService.CreateUserWithPasswordAsync(user, temporaryPassword);
@@ -223,13 +224,25 @@ namespace CaseRelayAPI.Controllers
 
             return Ok(new { 
                 message = "User created successfully. Login credentials have been sent to their email.",
-                temporaryPassword = temporaryPassword  // Optionally return the password in development environment
+                temporaryPassword = temporaryPassword  
             });
+        }
+
+        private string GenerateTemporaryPassword()
+        {
+            const string validChars = "ABCDEFGHJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@$?_-";
+            Random random = new Random();
+            char[] chars = new char[8];
+            for (int i = 0; i < chars.Length; i++)
+            {
+                chars[i] = validChars[random.Next(validChars.Length)];
+            }
+            return new string(chars);
         }
     }
 
     public class RoleUpdateDto
     {
-        public string NewRole { get; set; } = string.Empty;  // Match the frontend property name
+        public string NewRole { get; set; } = string.Empty;
     }
 }
