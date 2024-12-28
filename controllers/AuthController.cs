@@ -66,12 +66,29 @@ namespace CaseRelayAPI.Controllers
             if (request == null || string.IsNullOrEmpty(request.PoliceId) || string.IsNullOrEmpty(request.Passcode))
                 return BadRequest(new { message = "Invalid login details." });
 
+            _logger.LogInformation("Attempting to authenticate user with PoliceId: {PoliceId}", request.PoliceId);
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var result = await _authService.AuthenticateAsync(request.PoliceId, request.Passcode);
+
+            if (result == null)
+            {
+                _logger.LogError("Authentication failed for PoliceId: {PoliceId}", request.PoliceId);
+                return StatusCode(500, new { message = "An error occurred during login." });
+            }
 
             if (!result.IsSuccess)
             {
+                _logger.LogError("Authentication failed for PoliceId: {PoliceId} with error: {ErrorMessage}", 
+                    request.PoliceId, result.ErrorMessage);
                 return Unauthorized(new { message = result.ErrorMessage });
             }
+
+            _logger.LogInformation("User authenticated successfully with PoliceId: {PoliceId}", request.PoliceId);
 
             var user = result.User;
 
@@ -84,8 +101,7 @@ namespace CaseRelayAPI.Controllers
                 role = user.Role,
                 department = user.Department,
                 badgeNumber = user.BadgeNumber,
-                rank = user.Rank,
-                requiresPasswordChange = result.RequiresPasswordChange
+                rank = user.Rank
             });
         }
 
@@ -264,4 +280,4 @@ public class RegisterRequest
     public string? Department { get; set; }
     public string? BadgeNumber { get; set; }
     public string? Rank { get; set; }
-}
+} 

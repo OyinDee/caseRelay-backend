@@ -110,8 +110,8 @@ public class EmailService
                     <p>Dear {firstName},</p>
                     <p>Your account has been created successfully. Here are your login credentials:</p>
                     <p>Police ID: <strong>{policeId}</strong><br>
-                    Temporary Password: <strong>{temporaryPassword}</strong></p>
-                    <p style='color: #ff0000;'>For security reasons, you will be required to change your password upon first login.</p>
+                    Password: <strong>{temporaryPassword}</strong></p>
+                    <p>You can change your password at any time from your profile settings.</p>
                     <p>Best regards,<br>CaseRelay Team</p>
                 </div>
             </body>

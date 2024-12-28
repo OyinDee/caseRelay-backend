@@ -212,7 +212,7 @@ namespace CaseRelayAPI.Controllers
                 Department = newUserDto.Department,
                 BadgeNumber = newUserDto.BadgeNumber,
                 Rank = newUserDto.Rank,
-                RequirePasswordReset = true  // Force password change on first login
+                RequirePasswordReset = false  // Changed to false - password reset is now optional
             };
 
             var createdUser = await _userService.CreateUserWithPasswordAsync(user, temporaryPassword);
@@ -220,7 +220,10 @@ namespace CaseRelayAPI.Controllers
             if (createdUser == null)
                 return BadRequest(new { message = "Failed to create user." });
 
-            return Ok(new { message = "User created successfully. Temporary password has been sent to their email." });
+            return Ok(new { 
+                message = "User created successfully. Login credentials have been sent to their email.",
+                temporaryPassword = temporaryPassword  // Optionally return the password in development environment
+            });
         }
     }
 

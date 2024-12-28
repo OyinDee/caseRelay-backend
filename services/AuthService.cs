@@ -210,12 +210,6 @@ namespace CaseRelayAPI.Services
                 return AuthResult.Failure("Invalid credentials");
             }
 
-            // If authentication successful, check if password reset is required
-            if (user.RequirePasswordReset)
-            {
-                return AuthResult.Success(user, GenerateJwtToken(user), requiresPasswordChange: true);
-            }
-
             user.FailedLoginAttempts = 0;
             user.LastLogin = DateTime.UtcNow;
             await _context.SaveChangesAsync();
@@ -370,27 +364,6 @@ namespace CaseRelayAPI.Services
             await _context.SaveChangesAsync();
             return new Result { IsSuccess = true };
         }
-    }
-
-    public class AuthResult
-    {
-        public bool IsSuccess { get; set; }
-        public string? ErrorMessage { get; set; }
-        public User? User { get; set; }
-        public string? Token { get; set; }
-        public bool RequiresPasswordChange { get; set; }
-
-        public static AuthResult Success(User user, string? token, bool requiresPasswordChange = false) =>
-            new AuthResult 
-            { 
-                IsSuccess = true, 
-                User = user, 
-                Token = token,
-                RequiresPasswordChange = requiresPasswordChange 
-            };
-
-        public static AuthResult Failure(string error) =>
-            new AuthResult { IsSuccess = false, ErrorMessage = error };
     }
 }
 
