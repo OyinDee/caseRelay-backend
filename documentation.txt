@@ -1,0 +1,119 @@
+PROJECT: CaseRelay - Police Case Management System
+VERSION: 1.0.0
+
+=== PROJECT OVERVIEW ===
+CaseRelay is a comprehensive police case management system built with .NET 8.0, featuring real-time notifications, document management, and role-based access control.
+
+=== CORE FUNCTIONALITIES ===
+
+1. USER MANAGEMENT
+   - Secure authentication using JWT tokens
+   - Role-based access (Admin/Officer)
+   - Password reset functionality
+   - Account lockout after 5 failed attempts
+   - Profile management
+   - Email notifications for account actions
+
+2. CASE MANAGEMENT
+   - Create, read, update, delete cases
+   - Case status tracking:
+     * Pending
+     * Open
+     * Investigating
+     * Closed
+     * Resolved
+   - Case assignment and handover
+   - Document attachments
+   - Case comments
+   - Search functionality
+
+3. NOTIFICATION SYSTEM
+   - In-app notifications
+   - Email notifications
+   - Real-time updates for:
+     * Case assignments
+     * Status changes
+     * Comments
+     * Document uploads
+     * Profile changes
+     * Administrative actions
+
+4. DOCUMENT MANAGEMENT
+   - Secure file uploads via Cloudinary
+   - Supported formats: PDF, DOCX, JPG, PNG
+   - Maximum file size: 50MB
+   - Secure file access control
+
+=== TECHNICAL IMPLEMENTATION ===
+
+1. Backend Architecture:
+   - .NET 8.0 Web API
+   - Entity Framework Core
+   - SQL Server Database
+   - JWT Authentication
+   - Clean Architecture Pattern
+
+2. Security Features:
+   - JWT token authentication
+   - Password hashing (BCrypt)
+   - Role-based authorization
+   - Account lockout system
+   - Secure file handling
+   - HTTPS enforcement
+
+3. External Services:
+   - Cloudinary for file storage
+   - SMTP email service
+   - Azure hosting
+   - Application Insights monitoring
+
+4. Database Structure:
+   - Users table
+   - Cases table
+   - Comments table
+   - Documents table
+   - Notifications table
+
+=== DEPLOYMENT ===
+
+1. Hosting:
+   - Azure App Service
+   - Azure SQL Database
+   - Cloudinary CDN
+   - Automatic SSL/TLS
+
+2. Configuration:
+   - Environment variables
+   - Azure App Settings
+   - Automatic database migrations
+   - Error logging and monitoring
+
+=== API DOCUMENTATION ===
+
+Complete API documentation available at:
+- Swagger UI: /swagger/index.html
+- Detailed API routes: /docs/case-api.md
+
+=== MAINTENANCE ===
+
+1. Database:
+   - Automatic migrations
+   - Transaction handling
+   - Data consistency checks
+
+2. Security:
+   - Token expiration: 2 hours
+   - Password reset token expiration: 1 hour
+   - Account lockout duration: 30 minutes
+
+3. Monitoring:
+   - Application Insights integration
+   - Error logging
+   - Performance metrics
+
+=== CONTACT ===
+
+For technical support or questions:
+- Documentation: /docs/case-api.md
+- Swagger UI: /swagger
+- Application logs: Azure Portal > App Service > Log stream

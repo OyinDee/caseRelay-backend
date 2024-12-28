@@ -71,18 +71,17 @@ namespace CaseRelayAPI.Services
             _context.Cases.Add(newCase);
             await _context.SaveChangesAsync();
 
-            // Create notification for assigned officer
-            var notification = new Notification
+            // Notify assigned officer
+            await _notificationService.CreateNotificationAsync(new Notification
             {
                 UserId = await GetUserIdFromPoliceId(newCase.AssignedOfficerId),
-                Title = "New Case Assigned",
+                Title = "New Case Assignment",
                 Message = $"You have been assigned a new case: {newCase.Title}",
                 Type = "case",
                 RelatedCaseId = newCase.CaseId.ToString(),
                 ActionBy = newCase.CreatedBy.ToString()
-            };
+            });
 
-            await _notificationService.CreateNotificationAsync(notification);
             return true;
         }
 
@@ -145,6 +144,29 @@ namespace CaseRelayAPI.Services
             _context.Cases.Update(caseToHandover);
             await _context.SaveChangesAsync();
 
+            // Notify previous officer
+            if (!string.IsNullOrEmpty(caseToHandover.PreviousOfficerId))
+            {
+                await _notificationService.CreateNotificationAsync(new Notification
+                {
+                    UserId = await GetUserIdFromPoliceId(caseToHandover.PreviousOfficerId),
+                    Title = "Case Handover",
+                    Message = $"Case {caseToHandover.CaseNumber} has been reassigned",
+                    Type = "case",
+                    RelatedCaseId = caseId.ToString()
+                });
+            }
+
+            // Notify new officer
+            await _notificationService.CreateNotificationAsync(new Notification
+            {
+                UserId = await GetUserIdFromPoliceId(newOfficer.PoliceId),
+                Title = "New Case Assignment",
+                Message = $"Case {caseToHandover.CaseNumber} has been assigned to you",
+                Type = "case",
+                RelatedCaseId = caseId.ToString()
+            });
+
             return true;
         }
 
@@ -158,6 +180,20 @@ namespace CaseRelayAPI.Services
 
             caseToUpdate.Comments.Add(newComment);
             await _context.SaveChangesAsync();
+
+            // Notify case owner
+            var caseDetails = await GetCaseByIdAsync(caseId);
+            if (caseDetails != null)
+            {
+                await _notificationService.CreateNotificationAsync(new Notification
+                {
+                    UserId = await GetUserIdFromPoliceId(caseDetails.AssignedOfficerId),
+                    Title = "New Case Comment",
+                    Message = $"New comment added to case {caseDetails.CaseNumber}",
+                    Type = "case",
+                    RelatedCaseId = caseId.ToString()
+                });
+            }
 
             return caseToUpdate;
         }
@@ -184,6 +220,21 @@ namespace CaseRelayAPI.Services
                 if (result > 0)
                 {
                     _logger.LogInformation("Document added to database successfully for caseId: {CaseId}, FileName: {FileName}", newDocument.CaseId, newDocument.FileName);
+                    
+                    // Notify case owner
+                    var caseDetails = await GetCaseByIdAsync(newDocument.CaseId);
+                    if (caseDetails != null)
+                    {
+                        await _notificationService.CreateNotificationAsync(new Notification
+                        {
+                            UserId = await GetUserIdFromPoliceId(caseDetails.AssignedOfficerId),
+                            Title = "New Case Document",
+                            Message = $"New document added to case {caseDetails.CaseNumber}: {newDocument.FileName}",
+                            Type = "case",
+                            RelatedCaseId = newDocument.CaseId.ToString()
+                        });
+                    }
+
                     return true;
                 }
                 else
@@ -229,6 +280,17 @@ namespace CaseRelayAPI.Services
             caseToUpdate.Status = status;
             _context.Cases.Update(caseToUpdate);
             await _context.SaveChangesAsync();
+
+            // Notify assigned officer
+            await _notificationService.CreateNotificationAsync(new Notification
+            {
+                UserId = await GetUserIdFromPoliceId(caseToUpdate.AssignedOfficerId),
+                Title = "Case Status Updated",
+                Message = $"Case {caseToUpdate.CaseNumber} status changed to: {status}",
+                Type = "case",
+                RelatedCaseId = caseId.ToString()
+            });
+
             return true;
         }
 
