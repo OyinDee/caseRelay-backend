@@ -195,15 +195,14 @@ namespace CaseRelayAPI.Services
 
         public async Task<CaseStatistics> GetCaseStatisticsAsync()
         {
-            var totalCases = await _context.Cases.CountAsync();
-            var openCases = await _context.Cases.CountAsync(c => !c.IsClosed);
-            var closedCases = await _context.Cases.CountAsync(c => c.IsClosed);
-
             return new CaseStatistics
             {
-                TotalCases = totalCases,
-                OpenCases = openCases,
-                ClosedCases = closedCases
+                TotalCases = await _context.Cases.CountAsync(),
+                PendingCases = await _context.Cases.CountAsync(c => c.Status == "Pending"),
+                OpenCases = await _context.Cases.CountAsync(c => c.Status == "Open"),
+                InvestigatingCases = await _context.Cases.CountAsync(c => c.Status == "Investigating"),
+                ClosedCases = await _context.Cases.CountAsync(c => c.Status == "Closed"),
+                ResolvedCases = await _context.Cases.CountAsync(c => c.Status == "Resolved")
             };
         }
 
@@ -236,7 +235,10 @@ namespace CaseRelayAPI.Services
     public class CaseStatistics
     {
         public int TotalCases { get; set; }
+        public int PendingCases { get; set; }
         public int OpenCases { get; set; }
+        public int InvestigatingCases { get; set; }
         public int ClosedCases { get; set; }
+        public int ResolvedCases { get; set; }
     }
 }

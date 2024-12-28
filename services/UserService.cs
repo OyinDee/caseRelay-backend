@@ -44,31 +44,45 @@ namespace CaseRelayAPI.Services
             return await _context.Users.FindAsync(userId);
         }
 
-        public async Task<User?> UpdateUserAsync(User user)
+        public async Task<User?> UpdateUserAsync(User user, bool isAdminOperation = false)
         {
-            var userId = GetUserIdFromToken();
-            if (string.IsNullOrEmpty(userId))
-                return null;
+            if (!isAdminOperation)
+            {
+                var userId = GetUserIdFromToken();
+                if (string.IsNullOrEmpty(userId))
+                    return null;
 
-            var existingUser = await _context.Users.FindAsync(user.UserID);
-            if (existingUser == null || existingUser.UserID.ToString() != userId)
-                return null;
+                var existingUser = await _context.Users.FindAsync(user.UserID);
+                if (existingUser == null || existingUser.UserID.ToString() != userId)
+                    return null;
+            }
+            else
+            {
+                var existingUser = await _context.Users.FindAsync(user.UserID);
+                if (existingUser == null)
+                    return null;
 
-            existingUser.FirstName = user.FirstName ?? existingUser.FirstName;
-            existingUser.LastName = user.LastName ?? existingUser.LastName;
-            existingUser.Email = user.Email ?? existingUser.Email;
-            existingUser.Phone = user.Phone ?? existingUser.Phone;
-            existingUser.Rank = user.Rank ?? existingUser.Rank;
+                existingUser.Role = user.Role ?? existingUser.Role;
+                existingUser.FirstName = user.FirstName ?? existingUser.FirstName;
+                existingUser.LastName = user.LastName ?? existingUser.LastName;
+                existingUser.Email = user.Email ?? existingUser.Email;
+                existingUser.Phone = user.Phone ?? existingUser.Phone;
+                existingUser.Rank = user.Rank ?? existingUser.Rank;
 
-            _context.Users.Update(existingUser);
-            await _context.SaveChangesAsync();
+                _context.Users.Update(existingUser);
+                await _context.SaveChangesAsync();
 
-            return existingUser;
+                return existingUser;
+            }
+
+            return null;
         }
-public async Task<List<User>> GetAllUsersAsync()
-{
-    return await _context.Users.ToListAsync();
-}
+
+        public async Task<List<User>> GetAllUsersAsync()
+        {
+            return await _context.Users.ToListAsync();
+        }
+
         public async Task<bool> DeleteUserAsync(int userId)
         {
             var userIdFromToken = GetUserIdFromToken();

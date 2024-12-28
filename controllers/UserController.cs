@@ -166,7 +166,7 @@ namespace CaseRelayAPI.Controllers
                 return NotFound(new { message = "User not found." });
 
             user.Role = "Admin";
-            var updatedUser = await _userService.UpdateUserAsync(user);
+            var updatedUser = await _userService.UpdateUserAsync(user, isAdminOperation: true);
 
             if (updatedUser == null)
                 return BadRequest(new { message = "Failed to promote user to admin." });
