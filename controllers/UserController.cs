@@ -183,14 +183,11 @@ namespace CaseRelayAPI.Controllers
         [Authorize(Roles = "Admin")] // Only admins can delete users
         public async Task<IActionResult> DeleteUser(int userId)
         {
-            // Error 400 if:
-            // 1. User not found
-            // 2. Delete operation failed
-            // 3. User making request is not an admin
             var result = await _userService.DeleteUserAsync(userId);
             if (!result)
-                return BadRequest(new { message = "Failed to delete user." }); // This returns 400
-            // ...existing code...
+                return BadRequest(new { message = "Failed to delete user." });
+            
+            return Ok(new { message = "User deleted successfully." });
         }
 
         /// <summary>
