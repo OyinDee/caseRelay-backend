@@ -2,12 +2,21 @@ using System.ComponentModel.DataAnnotations;
 
 public class Case
 {
+    public static readonly string[] ValidStatuses = new[]
+    {
+        "Pending",
+        "Open",
+        "Investigating",
+        "Closed",
+        "Resolved"
+    };
+
     [Key]
     public int CaseId { get; set; }
     public string CaseNumber { get; set; } = string.Empty;
     public string Title { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
-    public string Status { get; set; } = "Open";
+    public string Status { get; set; } = "Pending";  // Changed default from "Open" to "Pending"
     public string AssignedOfficerId { get; set; } = string.Empty;  
     public string? PreviousOfficerId { get; set; }
     public string? UserId { get; set; }

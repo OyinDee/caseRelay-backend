@@ -163,6 +163,7 @@ builder.Services.AddCors(options =>
         builder.Services.AddScoped<IUserService, UserService>();
         builder.Services.AddScoped<EmailService>();
         builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+        builder.Services.AddScoped<INotificationService, NotificationService>();
     }
     catch (Exception ex)
     {

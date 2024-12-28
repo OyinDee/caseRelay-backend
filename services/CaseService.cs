@@ -30,11 +30,13 @@ namespace CaseRelayAPI.Services
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger<CaseService> _logger;
+        private readonly INotificationService _notificationService;
 
-        public CaseService(ApplicationDbContext context, ILogger<CaseService> logger)
+        public CaseService(ApplicationDbContext context, ILogger<CaseService> logger, INotificationService notificationService)
         {
             _context = context;
             _logger = logger;
+            _notificationService = notificationService;
         }
 
         public async Task<List<Case>> GetCasesByUserIdAsync(int userId)
@@ -68,6 +70,19 @@ namespace CaseRelayAPI.Services
         {
             _context.Cases.Add(newCase);
             await _context.SaveChangesAsync();
+
+            // Create notification for assigned officer
+            var notification = new Notification
+            {
+                UserId = await GetUserIdFromPoliceId(newCase.AssignedOfficerId),
+                Title = "New Case Assigned",
+                Message = $"You have been assigned a new case: {newCase.Title}",
+                Type = "case",
+                RelatedCaseId = newCase.CaseId.ToString(),
+                ActionBy = newCase.CreatedBy.ToString()
+            };
+
+            await _notificationService.CreateNotificationAsync(notification);
             return true;
         }
 
@@ -195,15 +210,14 @@ namespace CaseRelayAPI.Services
 
         public async Task<CaseStatistics> GetCaseStatisticsAsync()
         {
-            var totalCases = await _context.Cases.CountAsync();
-            var openCases = await _context.Cases.CountAsync(c => !c.IsClosed);
-            var closedCases = await _context.Cases.CountAsync(c => c.IsClosed);
-
             return new CaseStatistics
             {
-                TotalCases = totalCases,
-                OpenCases = openCases,
-                ClosedCases = closedCases
+                TotalCases = await _context.Cases.CountAsync(),
+                PendingCases = await _context.Cases.CountAsync(c => c.Status == "Pending"),
+                OpenCases = await _context.Cases.CountAsync(c => c.Status == "Open"),
+                InvestigatingCases = await _context.Cases.CountAsync(c => c.Status == "Investigating"),
+                ClosedCases = await _context.Cases.CountAsync(c => c.Status == "Closed"),
+                ResolvedCases = await _context.Cases.CountAsync(c => c.Status == "Resolved")
             };
         }
 
@@ -231,12 +245,21 @@ namespace CaseRelayAPI.Services
             await _context.SaveChangesAsync();
             return true;
         }
+
+        private async Task<int> GetUserIdFromPoliceId(string policeId)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.PoliceId == policeId);
+            return user?.UserID ?? 0;
+        }
     }
 
     public class CaseStatistics
     {
         public int TotalCases { get; set; }
+        public int PendingCases { get; set; }
         public int OpenCases { get; set; }
+        public int InvestigatingCases { get; set; }
         public int ClosedCases { get; set; }
+        public int ResolvedCases { get; set; }
     }
 }
