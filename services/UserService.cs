@@ -15,16 +15,18 @@ namespace CaseRelayAPI.Services
         private readonly ApplicationDbContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly INotificationService _notificationService;
+        private readonly IEmailService _emailService; 
 
         public UserService(ApplicationDbContext context, 
                           IHttpContextAccessor httpContextAccessor,
-                          INotificationService notificationService)
+                          INotificationService notificationService,
+                          IEmailService emailService) 
         {
             _context = context;
             _httpContextAccessor = httpContextAccessor;
             _notificationService = notificationService;
+            _emailService = emailService; 
         }
-
         private string GetUserIdFromToken()
         {
             var token = _httpContextAccessor.HttpContext?.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
