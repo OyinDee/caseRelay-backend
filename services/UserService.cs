@@ -14,11 +14,15 @@ namespace CaseRelayAPI.Services
     {
         private readonly ApplicationDbContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly INotificationService _notificationService;
 
-        public UserService(ApplicationDbContext context, IHttpContextAccessor httpContextAccessor)
+        public UserService(ApplicationDbContext context, 
+                          IHttpContextAccessor httpContextAccessor,
+                          INotificationService notificationService)
         {
             _context = context;
             _httpContextAccessor = httpContextAccessor;
+            _notificationService = notificationService;
         }
 
         private string GetUserIdFromToken()
@@ -72,6 +76,15 @@ namespace CaseRelayAPI.Services
                 _context.Users.Update(existingUser);
                 await _context.SaveChangesAsync();
 
+                // Notify user about profile update
+                await _notificationService.CreateNotificationAsync(new Notification
+                {
+                    UserId = existingUser.UserID,
+                    Title = "Profile Updated",
+                    Message = "Your profile information has been updated",
+                    Type = "admin"
+                });
+
                 return existingUser;
             }
 
@@ -85,21 +98,47 @@ namespace CaseRelayAPI.Services
 
         public async Task<bool> DeleteUserAsync(int userId)
         {
-            var userIdFromToken = GetUserIdFromToken();
-            if (string.IsNullOrEmpty(userIdFromToken))
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                var user = await _context.Users.FindAsync(userId);
+                if (user == null) return false;
+
+                // Notify user about account deletion
+                await _notificationService.CreateNotificationAsync(new Notification
+                {
+                    UserId = userId,
+                    Title = "Account Deleted",
+                    Message = "Your account has been deleted",
+                    Type = "admin"
+                });
+
+                // First, handle related cases
+                var cases = await _context.Cases
+                    .Where(c => c.AssignedOfficerId == user.PoliceId)
+                    .ToListAsync();
+
+                foreach (var caseItem in cases)
+                {
+                    caseItem.AssignedOfficerId = "Unassigned";
+                    caseItem.PreviousOfficerId = user.PoliceId;
+                }
+
+                // Update the cases
+                _context.Cases.UpdateRange(cases);
+
+                // Now delete the user
+                _context.Users.Remove(user);
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+
+                return true;
+            }
+            catch (Exception)
+            {
+                await transaction.RollbackAsync();
                 return false;
-
-            if (userIdFromToken != userId.ToString())
-                return false;
-
-            var user = await _context.Users.FindAsync(userId);
-            if (user == null)
-                return false;
-
-            _context.Users.Remove(user);
-            await _context.SaveChangesAsync();
-
-            return true;
+            }
         }
 
         public async Task<User?> CreateUserAsync(User newUser)
