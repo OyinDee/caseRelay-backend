@@ -197,14 +197,30 @@ namespace CaseRelayAPI.Controllers
         /// <returns>The created user profile.</returns>
         [HttpPost("create")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> CreateUser([FromBody] User newUser)
+        public async Task<IActionResult> CreateUser([FromBody] CreateUserDto newUserDto)
         {
-            var createdUser = await _userService.CreateUserAsync(newUser);
+            string temporaryPassword = PasswordGenerator.GenerateTemporaryPassword();
+            
+            var user = new User
+            {
+                PoliceId = newUserDto.PoliceId,
+                FirstName = newUserDto.FirstName,
+                LastName = newUserDto.LastName,
+                Email = newUserDto.Email,
+                Phone = newUserDto.Phone,
+                Role = newUserDto.Role ?? "Officer",
+                Department = newUserDto.Department,
+                BadgeNumber = newUserDto.BadgeNumber,
+                Rank = newUserDto.Rank,
+                RequirePasswordReset = true  // Force password change on first login
+            };
+
+            var createdUser = await _userService.CreateUserWithPasswordAsync(user, temporaryPassword);
 
             if (createdUser == null)
                 return BadRequest(new { message = "Failed to create user." });
 
-            return Ok(createdUser);
+            return Ok(new { message = "User created successfully. Temporary password has been sent to their email." });
         }
     }
 
