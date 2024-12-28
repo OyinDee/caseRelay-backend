@@ -98,4 +98,25 @@ public class EmailService
 
         await SendEmailAsync(toEmail, subject, body);
     }
+
+    public async Task SendNewUserCredentialsAsync(string toEmail, string firstName, string policeId, string temporaryPassword)
+    {
+        var subject = "Welcome to CaseRelay - Your Account Credentials";
+        var body = $@"
+            <html>
+            <body style='font-family: Arial, sans-serif; color: #000000; padding: 20px;'>
+                <div style='max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 20px; border: 1px solid #e0e0e0; border-radius: 5px;'>
+                    <h2>Welcome to CaseRelay!</h2>
+                    <p>Dear {firstName},</p>
+                    <p>Your account has been created successfully. Here are your login credentials:</p>
+                    <p>Police ID: <strong>{policeId}</strong><br>
+                    Password: <strong>{temporaryPassword}</strong></p>
+                    <p>You can change your password at any time from your profile settings.</p>
+                    <p>Best regards,<br>CaseRelay Team</p>
+                </div>
+            </body>
+            </html>";
+
+        await SendEmailAsync(toEmail, subject, body);
+    }
 }

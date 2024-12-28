@@ -148,5 +148,26 @@ namespace CaseRelayAPI.Services
 
             return newUser;
         }
+
+        public async Task<User?> CreateUserWithPasswordAsync(User newUser, string temporaryPassword)
+        {
+            newUser.PasscodeHash = BCrypt.Net.BCrypt.HashPassword(temporaryPassword);
+            newUser.CreatedAt = DateTime.UtcNow;
+            newUser.IsActive = true;
+            newUser.RequirePasswordReset = true;
+            
+            await _context.Users.AddAsync(newUser);
+            await _context.SaveChangesAsync();
+
+            // Send credentials email
+            await _emailService.SendNewUserCredentialsAsync(
+                newUser.Email,
+                newUser.FirstName,
+                newUser.PoliceId,
+                temporaryPassword
+            );
+
+            return newUser;
+        }
     }
 }
