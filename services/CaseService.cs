@@ -30,11 +30,13 @@ namespace CaseRelayAPI.Services
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger<CaseService> _logger;
+        private readonly INotificationService _notificationService;
 
-        public CaseService(ApplicationDbContext context, ILogger<CaseService> logger)
+        public CaseService(ApplicationDbContext context, ILogger<CaseService> logger, INotificationService notificationService)
         {
             _context = context;
             _logger = logger;
+            _notificationService = notificationService;
         }
 
         public async Task<List<Case>> GetCasesByUserIdAsync(int userId)
@@ -68,6 +70,19 @@ namespace CaseRelayAPI.Services
         {
             _context.Cases.Add(newCase);
             await _context.SaveChangesAsync();
+
+            // Create notification for assigned officer
+            var notification = new Notification
+            {
+                UserId = await GetUserIdFromPoliceId(newCase.AssignedOfficerId),
+                Title = "New Case Assigned",
+                Message = $"You have been assigned a new case: {newCase.Title}",
+                Type = "case",
+                RelatedCaseId = newCase.CaseId.ToString(),
+                ActionBy = newCase.CreatedBy.ToString()
+            };
+
+            await _notificationService.CreateNotificationAsync(notification);
             return true;
         }
 
@@ -229,6 +244,12 @@ namespace CaseRelayAPI.Services
             _context.Cases.Update(caseToAssign);
             await _context.SaveChangesAsync();
             return true;
+        }
+
+        private async Task<int> GetUserIdFromPoliceId(string policeId)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.PoliceId == policeId);
+            return user?.UserID ?? 0;
         }
     }
 
